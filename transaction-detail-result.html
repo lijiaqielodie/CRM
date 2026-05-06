@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>交易明细结果</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
+  <link rel="stylesheet" href="./styles.css" />
+</head>
+<body class="bg-[#e8ecf3] min-h-screen flex items-center justify-center p-6">
+  <div class="phone-shell">
+    <div class="notch"></div>
+    <div class="status-bar bg-white/95"><span>16:22</span><div class="flex gap-1"><i class="fa-solid fa-signal"></i><span>5G</span><i class="fa-solid fa-battery-full"></i></div></div>
+    <div class="safe-content px-4 pt-4 pb-4">
+      <div class="flex items-center justify-between">
+        <h1 class="page-title">交易明细结果</h1>
+        <a href="./transaction-query.html" class="text-sm text-blue-600">返回</a>
+      </div>
+      <div class="mt-3 bg-white rounded-2xl p-3 shadow-sm text-xs text-slate-500">
+        账号：<span id="acct" class="font-mono text-slate-700"></span> · 时间范围：<span id="range" class="text-slate-700"></span>
+      </div>
+      <div class="mt-3 bg-white rounded-2xl p-4 shadow-sm">
+        <div class="flex items-center justify-between">
+          <p class="font-semibold text-slate-800">交易明细</p>
+          <span class="text-xs text-slate-500">共 10 笔</span>
+        </div>
+        <div class="mt-3 space-y-3 text-sm">
+          <div class="flex items-start justify-between p-3 rounded-xl bg-slate-50"><div><p class="font-medium text-slate-800">对外转账</p><p class="text-xs text-slate-500 mt-1">2026-04-27 11:20 · 交易对手：深蓝制造</p></div><p class="font-semibold text-rose-600">-¥ 120,000</p></div>
+          <div class="flex items-start justify-between p-3 rounded-xl bg-slate-50"><div><p class="font-medium text-slate-800">入账</p><p class="text-xs text-slate-500 mt-1">2026-04-27 09:05 · 交易对手：华达连锁</p></div><p class="font-semibold text-emerald-600">+¥ 560,000</p></div>
+          <div class="flex items-start justify-between p-3 rounded-xl bg-slate-50"><div><p class="font-medium text-slate-800">手续费</p><p class="text-xs text-slate-500 mt-1">2026-04-26 18:40 · 渠道：网银</p></div><p class="font-semibold text-rose-600">-¥ 35</p></div>
+        </div>
+      </div>
+    </div>
+    <div class="tab-bar">
+      <a class="tab-item" href="./workbench.html"><i class="fa-solid fa-table-columns text-lg"></i><div>工作台</div></a>
+      <a class="tab-item active" href="./customer-center.html"><i class="fa-regular fa-user text-lg"></i><div>客户中心</div></a>
+      <a class="tab-item" href="./marketing-center.html"><i class="fa-solid fa-bullhorn text-lg"></i><div>营销中心</div></a>
+      <a class="tab-item" href="./process-center.html"><i class="fa-solid fa-diagram-project text-lg"></i><div>流程中心</div></a>
+      <a class="tab-item" href="./management-center.html"><i class="fa-solid fa-gear text-lg"></i><div>管理中心</div></a>
+      <a class="tab-item" href="./parameter-center.html"><i class="fa-solid fa-sliders text-lg"></i><div>参数中心</div></a>
+    </div>
+  </div>
+  <script>
+    const p = new URLSearchParams(window.location.search);
+    document.getElementById('acct').textContent = p.get('account') || '-';
+    const s = p.get('startDate') || '-';
+    const e = p.get('endDate') || '-';
+    document.getElementById('range').textContent = `${s} 至 ${e}`;
+  </script>
+</body>
+</html>

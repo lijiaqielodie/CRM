@@ -1,0 +1,667 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>客户360视图</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
+  <link rel="stylesheet" href="./styles.css" />
+</head>
+<body class="bg-[#e8ecf3] min-h-screen flex items-center justify-center p-6">
+  <div class="phone-shell">
+    <div class="notch"></div>
+    <div class="status-bar bg-white/95"><span>16:22</span><div class="flex gap-1"><i class="fa-solid fa-signal"></i><span>5G</span><i class="fa-solid fa-battery-full"></i></div></div>
+
+    <div id="scroll-area" class="safe-content overflow-y-auto pb-4">
+      <div class="px-4 pt-3 flex items-center justify-between">
+        <a href="./managed-customers.html" class="text-slate-600"><i class="fa-solid fa-angle-left text-lg"></i></a>
+        <span class="text-[15px] font-semibold text-slate-900">客户详情</span>
+        <i class="fa-solid fa-share-nodes text-slate-500 text-lg"></i>
+      </div>
+
+      <!-- 3601：基本信息整卡 -->
+      <div class="px-4 mt-3">
+        <div class="rounded-2xl overflow-hidden shadow-lg border border-white/80 bg-white">
+          <div class="relative h-24 bg-gradient-to-r from-[#1e40af] via-[#2563eb] to-[#6366f1]">
+            <div class="absolute inset-0 bg-gradient-to-t from-black/25 to-transparent"></div>
+            <p class="absolute bottom-2 left-3 text-[11px] text-white/90 font-medium tracking-wide">CORPORATE · 360</p>
+          </div>
+          <div class="p-4 -mt-8 relative">
+            <div class="flex gap-3 items-start">
+              <div class="w-16 h-16 rounded-2xl bg-white shadow-md border border-slate-100 flex items-center justify-center text-3xl text-blue-600 shrink-0">
+                <i class="fa-solid fa-building"></i>
+              </div>
+              <div class="flex-1 min-w-0 pt-6">
+                <p id="customer-name" class="text-[18px] font-bold text-slate-900 leading-snug">华兴科技集团</p>
+                <div class="flex flex-wrap gap-1.5 mt-2">
+                  <span id="tag-kechuang" class="text-[10px] px-2 py-0.5 rounded-full bg-blue-50 text-blue-700 border border-blue-100">科创企业</span>
+                  <span class="text-[10px] px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-100">战略客户</span>
+                  <span id="risk-badge" class="text-[10px] px-2 py-0.5 rounded-full bg-rose-50 text-rose-700 border border-rose-200">风险等级 · 中高</span>
+                </div>
+              </div>
+            </div>
+            <dl class="mt-4 grid grid-cols-2 gap-x-2 gap-y-2 text-[11px] border-t border-slate-100 pt-3">
+              <div class="flex flex-col"><dt class="text-slate-400">客户编号</dt><dd id="cust-no" class="font-mono text-slate-800 font-medium mt-0.5">C001</dd></div>
+              <div class="flex flex-col"><dt class="text-slate-400">所属机构</dt><dd id="cust-org" class="text-slate-800 font-medium mt-0.5">深圳分行</dd></div>
+              <div class="flex flex-col col-span-2"><dt class="text-slate-400">统一社会信用代码</dt><dd class="font-mono text-[10px] text-slate-700 mt-0.5 leading-snug">91440300MA5FXXXXXX</dd></div>
+              <div class="flex flex-col"><dt class="text-slate-400">法人代表</dt><dd class="text-slate-800 mt-0.5">王某某</dd></div>
+              <div class="flex flex-col"><dt class="text-slate-400">注册资本</dt><dd class="text-slate-800 mt-0.5">50,000万元</dd></div>
+              <div class="flex flex-col"><dt class="text-slate-400">成立日期</dt><dd class="text-slate-800 mt-0.5">2009-06-18</dd></div>
+              <div class="flex flex-col"><dt class="text-slate-400">客户经理</dt><dd id="mgr-name" class="text-blue-700 font-medium mt-0.5">李佳琪</dd></div>
+              <div class="flex flex-col col-span-2"><dt class="text-slate-400">注册地址</dt><dd class="text-slate-700 mt-0.5 leading-snug">广东省深圳市南山区科技园科苑路 xx 号</dd></div>
+            </dl>
+            <div id="activity-tags-wrap" class="hidden mt-3 rounded-xl border border-slate-100 bg-slate-50 p-2.5">
+              <p class="text-[10px] text-slate-400">营销活动任务标签</p>
+              <div id="activity-tags" class="mt-1.5 flex flex-wrap gap-1.5 text-[10px]"></div>
+            </div>
+
+            <div id="wrap-previsit" class="hidden mt-4">
+              <a id="link-previsit" href="#" class="flex items-center justify-center gap-2 w-full py-3 rounded-full text-[13px] font-semibold text-white shadow-lg bg-gradient-to-r from-orange-400 via-rose-500 to-red-500">
+                <i class="fa-solid fa-file-lines"></i>访前一页纸
+              </a>
+              <p class="text-[10px] text-center text-slate-400 mt-2">跳转检索页并自动带入企业名称</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 四个导览入口 → 弹窗（对齐 customer-info*.jpg） -->
+      <div class="px-4 mt-4 grid grid-cols-4 gap-2 text-center">
+        <button type="button" data-modal="modal-customer-info" class="modal-trigger rounded-2xl bg-white py-3 shadow-sm border border-slate-100 active:scale-[0.98] transition">
+          <i class="fa-solid fa-id-card text-blue-600 text-lg"></i>
+          <p class="text-[10px] text-slate-700 mt-1 leading-tight">客户信息</p>
+        </button>
+        <button type="button" data-modal="modal-account-info" class="modal-trigger rounded-2xl bg-white py-3 shadow-sm border border-slate-100 active:scale-[0.98] transition">
+          <i class="fa-solid fa-wallet text-emerald-600 text-lg"></i>
+          <p class="text-[10px] text-slate-700 mt-1 leading-tight">账户信息</p>
+        </button>
+        <button type="button" data-modal="modal-product-info" class="modal-trigger rounded-2xl bg-white py-3 shadow-sm border border-slate-100 active:scale-[0.98] transition">
+          <i class="fa-solid fa-layer-group text-violet-600 text-lg"></i>
+          <p class="text-[10px] text-slate-700 mt-1 leading-tight">产品信息</p>
+        </button>
+        <button type="button" data-modal="modal-alert-info" class="modal-trigger rounded-2xl bg-white py-3 shadow-sm border border-slate-100 active:scale-[0.98] transition">
+          <i class="fa-regular fa-bell text-amber-600 text-lg"></i>
+          <p class="text-[10px] text-slate-700 mt-1 leading-tight">客户提醒</p>
+        </button>
+      </div>
+
+      <!-- 重点关注 -->
+      <div class="px-4 mt-5">
+        <div class="flex items-center gap-2 mb-2">
+          <span class="w-1 h-4 rounded-full bg-amber-500"></span>
+          <h2 class="text-sm font-bold text-slate-800">重点关注</h2>
+        </div>
+        <div class="bg-white rounded-2xl p-3 shadow-sm border border-slate-100 space-y-3">
+          <div class="rounded-xl border border-slate-200 overflow-hidden">
+            <div class="px-3 py-2 bg-slate-50 border-b border-slate-100">
+              <p class="text-[12px] font-semibold text-slate-800">在途流程</p>
+            </div>
+            <div class="px-2 py-1 bg-slate-50/70 border-b border-slate-100 grid grid-cols-5 text-[10px] text-slate-400">
+              <span>流程名称</span><span>当前节点</span><span>发起时间</span><span>状态</span><span class="text-right">操作</span>
+            </div>
+            <div class="px-2 py-2 grid grid-cols-5 text-[11px] text-slate-700 items-center">
+              <span class="truncate">授信额度调整</span>
+              <span class="truncate">风险审查</span>
+              <span>2025-12-01</span>
+              <span class="text-amber-600 font-medium">进行中</span>
+              <span class="text-right text-blue-600">查看详情</span>
+            </div>
+          </div>
+
+          <div class="rounded-xl border border-slate-200 overflow-hidden">
+            <div class="px-3 py-2 bg-slate-50 border-b border-slate-100 flex items-center justify-between">
+              <p class="text-[12px] font-semibold text-slate-800">商机提醒</p>
+              <span class="text-[10px] px-2 py-0.5 rounded-full bg-amber-50 text-amber-700 border border-amber-100">中优先级</span>
+            </div>
+            <div class="p-3">
+              <p class="text-[12px] font-medium text-slate-800">产品交叉销售</p>
+              <p class="text-[11px] text-slate-500 mt-1">客户综合供应链业务产品条件，可推荐相关产品</p>
+              <p class="text-[11px] text-blue-600 mt-2">预期价值：预计中间业务收入 20 万元/年</p>
+            </div>
+          </div>
+
+          <div class="rounded-xl border border-slate-200 p-3">
+            <div class="grid grid-cols-2 gap-2 text-[11px]">
+              <div class="rounded-lg bg-rose-50 border border-rose-100 p-2">
+                <p class="text-rose-700">风险提示</p>
+                <p class="text-slate-700 mt-1">CP/RAD 年检临期</p>
+              </div>
+              <div class="rounded-lg bg-slate-50 border border-slate-100 p-2">
+                <p class="text-slate-400">经营动态</p>
+                <p class="text-slate-700 mt-1">代发人数 +8%</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 3603：客户粘性（雷达 + 指标） -->
+      <div class="px-4 mt-5">
+        <div class="flex items-center gap-2 mb-2">
+          <span class="w-1 h-4 rounded-full bg-indigo-500"></span>
+          <h2 class="text-sm font-bold text-slate-800">客户粘性</h2>
+        </div>
+        <div class="bg-white rounded-2xl p-4 shadow-sm border border-slate-100">
+          <div class="rounded-xl bg-indigo-50 p-2 border border-indigo-100 mb-3">
+            <p class="text-indigo-600 text-[11px]">客户粘性指数</p>
+            <p class="font-medium text-slate-800 mt-1 text-[12px]">综合粘性得分 <span class="text-lg font-bold text-indigo-700">82</span> · 同业分位 P72</p>
+          </div>
+          <div class="flex justify-center mb-4">
+            <svg viewBox="0 0 120 120" class="w-36 h-36">
+              <polygon fill="rgba(59,130,246,0.15)" stroke="#3b82f6" stroke-width="1.2" points="60,15 105,42 92,98 28,98 15,42" />
+              <polygon fill="rgba(59,130,246,0.35)" stroke="#2563eb" stroke-width="1.5" points="60,28 94,46 84,88 36,88 26,46" />
+              <text x="60" y="112" text-anchor="middle" class="fill-slate-400 text-[8px]" font-size="8">粘性雷达（示意）</text>
+            </svg>
+          </div>
+          <div class="grid grid-cols-4 gap-2 text-[10px] text-center">
+            <div><p class="text-slate-400">产品覆盖</p><p class="font-bold text-indigo-700 mt-1">86%</p></div>
+            <div><p class="text-slate-400">资金留存</p><p class="font-bold text-emerald-700 mt-1">72%</p></div>
+            <div><p class="text-slate-400">结算依存</p><p class="font-bold text-amber-700 mt-1">68%</p></div>
+            <div><p class="text-slate-400">活跃指数</p><p class="font-bold text-sky-700 mt-1">高</p></div>
+          </div>
+          <table class="w-full text-[10px] mt-4 border-collapse">
+            <thead><tr class="text-slate-400 border-b"><th class="py-1 text-left">维度</th><th class="py-1">本期</th><th class="py-1">环比</th></tr></thead>
+            <tbody class="text-slate-700">
+              <tr class="border-b border-slate-50"><td class="py-1.5">结算留存比例</td><td class="text-center">72%</td><td class="text-center text-emerald-600">+2.1%</td></tr>
+              <tr class="border-b border-slate-50"><td class="py-1.5">网银渗透率</td><td class="text-center">91%</td><td class="text-center text-emerald-600">+1.4%</td></tr>
+              <tr><td class="py-1.5">交叉销售持有数</td><td class="text-center">5.2</td><td class="text-center text-rose-500">-0.3</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- 科创画像 -->
+      <div id="block-portrait" class="px-4 mt-5">
+        <div class="flex items-center gap-2 mb-2">
+          <span class="w-1 h-4 rounded-full bg-cyan-500"></span>
+          <h2 class="text-sm font-bold text-slate-800">科创画像</h2>
+        </div>
+        <div class="bg-white rounded-2xl p-4 shadow-sm border border-slate-100 space-y-3 text-xs">
+          <div class="rounded-xl border border-slate-100 bg-slate-50 p-3"><p class="font-semibold text-slate-800">资质详情</p><p class="mt-1 text-slate-600">国家高新技术企业 · 省级专精特新</p></div>
+          <div class="rounded-xl border border-slate-100 bg-slate-50 p-3"><p class="font-semibold text-slate-800">五力评分</p><p class="mt-1 flex flex-wrap gap-2"><span class="px-2 py-0.5 rounded bg-white border text-[11px]">科技力 A</span><span class="px-2 py-0.5 rounded bg-white border text-[11px]">成长力 A-</span><span class="px-2 py-0.5 rounded bg-white border text-[11px]">融资力 B+</span></p></div>
+          <details id="block-sme" class="rounded-xl border border-blue-100 bg-blue-50/50 p-3">
+            <summary class="font-semibold text-slate-800 cursor-pointer list-none flex justify-between items-center"><span>中小企业评分</span><span class="text-[10px] text-slate-400 font-normal">本人填报 · 科技型可见</span></summary>
+            <div class="mt-3 space-y-2 border-t border-blue-100 pt-3">
+              <label class="block"><span class="text-[10px] text-slate-500">团队分</span><input id="team-score" type="number" value="22" class="w-full mt-1 rounded-lg border border-slate-200 p-2 text-sm" /></label>
+              <label class="block"><span class="text-[10px] text-slate-500">科技分</span><input id="tech-score" type="number" value="35" class="w-full mt-1 rounded-lg border border-slate-200 p-2 text-sm" /></label>
+              <label class="block"><span class="text-[10px] text-slate-500">加分</span><input id="plus-score" type="number" value="8" class="w-full mt-1 rounded-lg border border-slate-200 p-2 text-sm" /></label>
+              <label class="block"><span class="text-[10px] text-slate-500">扣分</span><input id="minus-score" type="number" value="3" class="w-full mt-1 rounded-lg border border-slate-200 p-2 text-sm" /></label>
+              <div class="p-2 rounded-lg bg-white border border-blue-100 text-blue-800 text-sm">合计：<span id="total-score" class="font-bold">62</span></div>
+              <div class="grid grid-cols-2 gap-2"><button type="button" class="py-2 rounded-lg bg-slate-100 text-xs">下载Excel</button><button type="button" class="py-2 rounded-lg bg-blue-600 text-white text-xs">提交</button></div>
+            </div>
+          </details>
+        </div>
+      </div>
+
+      <!-- 客户旅程：三个模块独立展示（非单一时间轴混排） -->
+      <div class="px-4 mt-5 space-y-5 pb-6">
+        <div class="flex items-center gap-2 mb-1"><span class="w-1 h-4 rounded-full bg-violet-500"></span><h2 class="text-sm font-bold text-slate-800">客户旅程</h2></div>
+
+        <div class="bg-white rounded-2xl p-4 shadow-sm border border-slate-100">
+          <div class="flex items-center gap-2 mb-3"><i class="fa-solid fa-building-columns text-blue-600"></i><h3 class="font-bold text-slate-800 text-sm">业务接触</h3></div>
+          <div class="space-y-3 border-l-2 border-blue-100 ml-2 pl-4">
+            <div class="relative"><span class="absolute -left-[21px] top-1 w-2 h-2 rounded-full bg-blue-600"></span><p class="text-[11px] text-slate-400">2021-06</p><p class="text-[13px] font-medium text-slate-800">创建客户档案 · 首次开立基本户</p></div>
+            <div class="relative"><span class="absolute -left-[21px] top-1 w-2 h-2 rounded-full bg-blue-400"></span><p class="text-[11px] text-slate-400">2022-03</p><p class="text-[13px] font-medium text-slate-800">授信申报 → 批复 → 放款支用</p></div>
+            <div class="relative"><span class="absolute -left-[21px] top-1 w-2 h-2 rounded-full bg-slate-300"></span><p class="text-[11px] text-slate-400">2025-11</p><p class="text-[13px] font-medium text-slate-800">授信年检 · 存款与理财购买记录归档</p></div>
+          </div>
+          <p class="text-[10px] text-slate-400 mt-3 leading-relaxed">节点覆盖：开户、授信、放款、还款、年检、销户、存款/理财等银行业务触点。</p>
+        </div>
+
+        <div class="bg-white rounded-2xl p-4 shadow-sm border border-slate-100">
+          <div class="flex items-center gap-2 mb-3"><i class="fa-solid fa-wand-magic-sparkles text-violet-600"></i><h3 class="font-bold text-slate-800 text-sm">客户大事记</h3><span class="text-[10px] px-2 py-0.5 rounded-full bg-violet-50 text-violet-700 border border-violet-100 ml-auto">大模型抽取</span></div>
+          <div class="space-y-2">
+            <div class="rounded-xl bg-violet-50/60 border border-violet-100 p-3"><p class="text-[11px] text-violet-700 font-medium">初创 · 成长</p><p class="text-[12px] text-slate-700 mt-1">2018 年完成股改并完成首轮私募股权融资。</p></div>
+            <div class="rounded-xl bg-white border border-slate-100 p-3"><p class="text-[11px] text-slate-400">成熟 · 扩张</p><p class="text-[12px] text-slate-700 mt-1">2024 年入选国家级单项冠军公示名单 · 战略合作签约头部车企。</p></div>
+            <div class="rounded-xl bg-rose-50 border border-rose-100 p-3"><p class="text-[11px] text-rose-700 font-medium">舆情 · 负面</p><p class="text-[12px] text-slate-700 mt-1">涉诉事项：买卖合同纠纷（一审胜诉 · 执行闭环）。</p></div>
+          </div>
+        </div>
+
+        <div class="bg-white rounded-2xl p-4 shadow-sm border border-slate-100">
+          <div class="flex items-center gap-2 mb-3"><i class="fa-solid fa-clipboard-list text-emerald-600"></i><h3 class="font-bold text-slate-800 text-sm">拜访纪要</h3></div>
+          <div class="grid grid-cols-2 gap-2 mb-3 text-[11px]">
+            <div class="rounded-xl bg-slate-50 border border-slate-100 p-2"><p class="text-slate-400">拜访总数</p><p class="font-semibold text-slate-800 mt-1">28 次</p></div>
+            <div class="rounded-xl bg-slate-50 border border-slate-100 p-2"><p class="text-slate-400">月均拜访数</p><p class="font-semibold text-slate-800 mt-1">3.5 次</p></div>
+            <div class="rounded-xl bg-emerald-50 border border-emerald-100 p-2 col-span-2"><p class="text-emerald-700">拜访最多客户经理</p><p class="font-semibold text-slate-800 mt-1">李佳琪 · 拜访 12 次</p></div>
+          </div>
+          <div class="space-y-3 border-l-2 border-emerald-100 ml-2 pl-4">
+            <div class="relative pb-3 border-b border-slate-50">
+              <span class="absolute -left-[21px] top-1 w-2 h-2 rounded-full bg-emerald-600"></span>
+              <p class="text-[11px] text-slate-400">2026-04-18</p>
+              <p class="text-[13px] font-medium text-slate-800 mt-1">纪要：现金管理续约意向 · 参会：实控人 / 财务总监</p>
+              <p class="text-[11px] text-slate-600 mt-1">拜访申请人：李佳琪</p>
+              <p class="text-[11px] text-slate-600">拜访地点：深圳南山总部</p>
+            </div>
+            <div class="relative pb-3 border-b border-slate-50">
+              <span class="absolute -left-[21px] top-1 w-2 h-2 rounded-full bg-emerald-500"></span>
+              <p class="text-[11px] text-slate-400">2026-03-02</p>
+              <p class="text-[13px] font-medium text-slate-800 mt-1">纪要：供应链金融额度复核沟通</p>
+              <p class="text-[11px] text-slate-600 mt-1">拜访申请人：周志远</p>
+              <p class="text-[11px] text-slate-600">拜访地点：广州分部</p>
+            </div>
+            <div class="relative">
+              <span class="absolute -left-[21px] top-1 w-2 h-2 rounded-full bg-slate-300"></span>
+              <p class="text-[11px] text-slate-400">2026-01-23</p>
+              <p class="text-[13px] font-medium text-slate-800 mt-1">纪要：年初授信与结算合作计划沟通</p>
+              <p class="text-[11px] text-slate-600 mt-1">拜访申请人：李佳琪</p>
+              <p class="text-[11px] text-slate-600">拜访地点：客户总部会议室</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 业绩表现：按要求直接粘贴四张分析图 -->
+      <div class="px-4 pb-28">
+        <div class="flex items-center gap-2 mb-2">
+          <span class="w-1 h-4 rounded-full bg-emerald-500"></span>
+          <h2 class="text-sm font-bold text-slate-800">业绩表现</h2>
+        </div>
+        <div class="bg-white rounded-2xl p-3 shadow-sm border border-slate-100 space-y-3">
+          <img src="./customer-360/business-analysis.jpg" alt="业绩表现分析图1" class="w-full rounded-xl border border-slate-100" />
+          <img src="./customer-360/business-analysis2.jpg" alt="业绩表现分析图2" class="w-full rounded-xl border border-slate-100" />
+          <img src="./customer-360/business-analysis3.jpg" alt="业绩表现分析图3" class="w-full rounded-xl border border-slate-100" />
+          <img src="./customer-360/business-analysis4.jpg" alt="业绩表现分析图4" class="w-full rounded-xl border border-slate-100" />
+        </div>
+      </div>
+    </div>
+
+    <div class="absolute right-4 bottom-24 z-40 flex flex-col gap-2">
+      <button id="float-previsit" type="button" class="w-11 h-11 rounded-full bg-gradient-to-r from-orange-400 via-rose-500 to-red-500 text-white shadow-lg flex items-center justify-center" title="访前一页纸">
+        <i class="fa-solid fa-file-lines text-sm"></i>
+      </button>
+      <button id="float-top" type="button" class="w-11 h-11 rounded-full bg-white text-slate-600 border border-slate-200 shadow-lg flex items-center justify-center" title="回到顶部">
+        <i class="fa-solid fa-arrow-up text-sm"></i>
+      </button>
+    </div>
+
+    <!-- 弹窗：客户信息（小程序底部弹窗 · 结构化复刻） -->
+    <div id="modal-customer-info" class="modal fixed inset-0 z-[60] hidden flex items-end justify-center">
+      <div class="absolute inset-0 z-[61] bg-black/40" data-close-modal></div>
+      <div class="relative z-[62] w-full max-w-[393px] bg-white rounded-t-[14px] shadow-[0_-4px_24px_rgba(0,0,0,0.12)] flex flex-col max-h-[min(76vh,640px)] animate-[slideUp_.25s_ease-out]">
+        <div class="pt-2 pb-1 flex justify-center shrink-0"><span class="w-9 h-1 rounded-full bg-slate-200"></span></div>
+        <div class="flex justify-between items-center px-4 pb-2 border-b border-slate-100 shrink-0">
+          <h3 class="text-[16px] font-semibold text-slate-900">客户信息</h3>
+          <button type="button" class="text-slate-400 p-1 -mr-1 min-w-[44px] min-h-[44px] flex items-center justify-center" data-close-modal aria-label="关闭"><i class="fa-solid fa-xmark text-lg"></i></button>
+        </div>
+        <div class="overflow-y-auto px-4 pt-3 space-y-3" style="padding-bottom:max(1.25rem, env(safe-area-inset-bottom));">
+          <div class="rounded-xl border border-slate-100 bg-slate-50 p-1.5">
+            <div class="grid grid-cols-3 gap-1 text-[11px]" id="cust-info-tabs">
+              <button type="button" class="cust-info-tab rounded-lg py-2 bg-white text-blue-700 font-semibold shadow-sm" data-pane="pane-basic">工商信息</button>
+              <button type="button" class="cust-info-tab rounded-lg py-2 text-slate-600" data-pane="pane-finance">财报信息</button>
+              <button type="button" class="cust-info-tab rounded-lg py-2 text-slate-600" data-pane="pane-contact">联系信息</button>
+            </div>
+          </div>
+
+          <section id="pane-basic" class="cust-info-pane rounded-lg border border-slate-100 bg-slate-50/80 p-3">
+            <p class="text-[11px] font-medium text-slate-500 uppercase tracking-wide">登记与分类</p>
+            <dl class="mt-2 space-y-2 text-[13px]">
+              <div class="flex justify-between gap-3 py-1.5 border-b border-slate-100/80 last:border-0"><dt class="text-slate-500 shrink-0">国民经济行业</dt><dd class="text-slate-900 text-right leading-snug">C39 计算机、通信和其他电子设备制造业</dd></div>
+              <div class="flex justify-between gap-3 py-1.5 border-b border-slate-100/80 last:border-0"><dt class="text-slate-500">行业大类</dt><dd class="text-slate-900">制造业</dd></div>
+              <div class="flex justify-between gap-3 py-1.5"><dt class="text-slate-500">企业规模</dt><dd class="text-slate-900"><span class="rounded bg-blue-50 text-blue-700 text-[11px] px-1.5 py-0.5">大型</span></dd></div>
+            </dl>
+          </section>
+          <section class="cust-info-pane hidden rounded-lg border border-slate-100 p-3" id="pane-finance">
+            <p class="text-[11px] font-medium text-slate-500 uppercase tracking-wide">财报信息（近三年）</p>
+            <dl class="mt-2 space-y-2 text-[13px]">
+              <div class="flex justify-between gap-3 py-1.5 border-b border-slate-100/80"><dt class="text-slate-500">营业收入</dt><dd class="text-slate-900">23.6 亿元</dd></div>
+              <div class="flex justify-between gap-3 py-1.5 border-b border-slate-100/80"><dt class="text-slate-500">净利润</dt><dd class="text-slate-900">2.18 亿元</dd></div>
+              <div class="flex justify-between gap-3 py-1.5 border-b border-slate-100/80"><dt class="text-slate-500">资产负债率</dt><dd class="text-slate-900">56.4%</dd></div>
+              <div class="flex justify-between gap-3 py-1.5"><dt class="text-slate-500">经营现金流</dt><dd class="text-slate-900">1.42 亿元</dd></div>
+            </dl>
+          </section>
+
+          <section class="cust-info-pane hidden rounded-lg border border-slate-100 p-3" id="pane-contact">
+            <p class="text-[11px] font-medium text-slate-500 uppercase tracking-wide">联系信息</p>
+            <dl class="mt-2 space-y-2 text-[13px]">
+              <div class="flex justify-between gap-3 py-1.5 border-b border-slate-100/80"><dt class="text-slate-500">联系人</dt><dd class="text-slate-900">赵敏（财务总监）</dd></div>
+              <div class="flex justify-between gap-3 py-1.5 border-b border-slate-100/80"><dt class="text-slate-500">手机</dt><dd class="text-slate-900">138****2231</dd></div>
+              <div class="flex justify-between gap-3 py-1.5 border-b border-slate-100/80"><dt class="text-slate-500">办公电话</dt><dd class="text-slate-900">0755-86****21</dd></div>
+              <div class="flex justify-between gap-3 py-1.5"><dt class="text-slate-500">邮箱</dt><dd class="text-slate-900 break-all">finance@huaxingtech.com</dd></div>
+            </dl>
+          </section>
+
+          <section class="rounded-lg border border-slate-100 p-3">
+            <p class="text-[11px] font-medium text-slate-500">股权与治理</p>
+            <dl class="mt-2 space-y-2 text-[13px]">
+              <div class="flex justify-between gap-3"><dt class="text-slate-500">实际控制人</dt><dd class="text-slate-900 text-right">王某某</dd></div>
+              <div class="flex justify-between gap-3"><dt class="text-slate-500">持股</dt><dd class="text-slate-900">62.00%</dd></div>
+              <div class="flex justify-between gap-3"><dt class="text-slate-500">统一社会信用代码</dt><dd class="font-mono text-[11px] text-slate-800 text-right break-all">91440300MA5FXXXXXX</dd></div>
+            </dl>
+          </section>
+          <section class="rounded-lg border border-slate-100 p-3">
+            <p class="text-[11px] font-medium text-slate-500">经营与资质</p>
+            <p class="mt-2 text-[12px] text-slate-700 leading-relaxed">集成电路设计、智能终端制造；持有国家高新技术企业、省级专精特新等资质。</p>
+            <div class="flex flex-wrap gap-1.5 mt-3">
+              <span class="text-[10px] px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-800 border border-emerald-100">高新资质</span>
+              <span class="text-[10px] px-2 py-0.5 rounded-full bg-violet-50 text-violet-800 border border-violet-100">专精特新</span>
+              <span class="text-[10px] px-2 py-0.5 rounded-full bg-slate-50 text-slate-700 border border-slate-100">进出口许可</span>
+            </div>
+          </section>
+          <p class="text-[10px] text-slate-400 text-center pb-2">展示字段以接口为准 · 原型数据仅供示意</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- 弹窗：账户信息 -->
+    <div id="modal-account-info" class="modal fixed inset-0 z-[60] hidden flex items-end justify-center">
+      <div class="absolute inset-0 z-[61] bg-black/40" data-close-modal></div>
+      <div class="relative z-[62] w-full max-w-[393px] bg-white rounded-t-[14px] shadow-[0_-4px_24px_rgba(0,0,0,0.12)] flex flex-col max-h-[min(76vh,640px)] animate-[slideUp_.25s_ease-out]">
+        <div class="pt-2 pb-1 flex justify-center shrink-0"><span class="w-9 h-1 rounded-full bg-slate-200"></span></div>
+        <div class="flex justify-between items-center px-4 pb-2 border-b border-slate-100 shrink-0">
+          <div>
+            <h3 class="text-[16px] font-semibold text-slate-900">账户信息</h3>
+            <p class="text-[11px] text-slate-400 mt-0.5">本行人民币 · 共 3 户</p>
+          </div>
+          <button type="button" class="text-slate-400 p-1 min-w-[44px] min-h-[44px] flex items-center justify-center" data-close-modal aria-label="关闭"><i class="fa-solid fa-xmark text-lg"></i></button>
+        </div>
+        <div class="overflow-y-auto px-4 pt-3 space-y-3" style="padding-bottom:max(1.25rem, env(safe-area-inset-bottom));">
+          <div class="rounded-xl border border-slate-100 bg-slate-50 p-1.5">
+            <div class="grid grid-cols-3 gap-1 text-[11px]" id="account-info-tabs">
+              <button type="button" class="acct-tab rounded-lg py-2 bg-white text-blue-700 font-semibold shadow-sm" data-pane="acct-pane-deposit">存款</button>
+              <button type="button" class="acct-tab rounded-lg py-2 text-slate-600" data-pane="acct-pane-loan">贷款</button>
+              <button type="button" class="acct-tab rounded-lg py-2 text-slate-600" data-pane="acct-pane-plan">贷款还款计划</button>
+            </div>
+          </div>
+
+          <div id="acct-pane-deposit" class="acct-pane space-y-3">
+            <article class="rounded-xl border border-slate-100 bg-white p-3 shadow-sm">
+            <div class="flex items-start justify-between gap-2">
+              <div>
+                <p class="text-[11px] text-slate-400">基本户 · 活期</p>
+                <p class="font-mono text-[13px] text-slate-900 mt-1">6222 0000 0000 9938</p>
+              </div>
+              <span class="text-[10px] px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-100 shrink-0">正常</span>
+            </div>
+            <div class="mt-3 pt-3 border-t border-slate-50 flex gap-2">
+              <button type="button" class="flex-1 py-2 rounded-lg border border-blue-100 bg-blue-50 text-blue-700 text-[11px] balance-btn" data-acct="6222000000009938" data-balance="12,349,201.38">余额查询</button>
+              <button type="button" class="flex-1 py-2 rounded-lg border border-slate-200 bg-white text-slate-700 text-[11px] detail-btn" data-acct="6222000000009938">账户明细查询</button>
+            </div>
+            <p class="text-[10px] text-slate-400 mt-2">开户机构 · 深圳分行营业部</p>
+          </article>
+          <article class="rounded-xl border border-slate-100 p-3">
+            <div class="flex items-start justify-between gap-2">
+              <div>
+                <p class="text-[11px] text-slate-400">一般户 · 活期</p>
+                <p class="font-mono text-[13px] text-slate-900 mt-1">6214 0000 0000 1102</p>
+              </div>
+              <span class="text-[10px] px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-100">正常</span>
+            </div>
+            <div class="mt-3 pt-3 border-t border-slate-50 flex gap-2">
+              <button type="button" class="flex-1 py-2 rounded-lg border border-blue-100 bg-blue-50 text-blue-700 text-[11px] balance-btn" data-acct="6214000000001102" data-balance="3,856,022.00">余额查询</button>
+              <button type="button" class="flex-1 py-2 rounded-lg border border-slate-200 bg-white text-slate-700 text-[11px] detail-btn" data-acct="6214000000001102">账户明细查询</button>
+            </div>
+          </article>
+          <article class="rounded-xl border border-dashed border-slate-200 p-3 bg-slate-50/50">
+            <div class="flex justify-between text-[12px]">
+              <span class="text-slate-500">合计活期可用</span>
+              <span class="font-bold text-slate-900 tabular-nums">¥ 16,205,223.38</span>
+            </div>
+            <p class="text-[10px] text-slate-400 mt-2">不含理财/结构性存款账户；以核心系统为准。</p>
+          </article>
+          </div>
+
+          <div id="acct-pane-loan" class="acct-pane hidden space-y-2">
+            <div class="rounded-xl border border-slate-100 p-3">
+              <p class="text-[12px] font-semibold text-slate-900">流动资金贷款</p>
+              <p class="text-[11px] text-slate-500 mt-1">贷款余额：9.07 亿元 · 到期：2027-06-30</p>
+            </div>
+            <div class="rounded-xl border border-slate-100 p-3">
+              <p class="text-[12px] font-semibold text-slate-900">票据贴现</p>
+              <p class="text-[11px] text-slate-500 mt-1">贷款余额：4.88 亿元 · 平均期限：142天</p>
+            </div>
+          </div>
+
+          <div id="acct-pane-plan" class="acct-pane hidden">
+            <div class="rounded-xl border border-slate-100 p-3 text-[11px]">
+              <p class="font-semibold text-slate-900 mb-2">贷款还款计划（近6期）</p>
+              <div class="space-y-1.5 text-slate-600">
+                <div class="flex justify-between"><span>2026-05-20</span><span>1,200 万</span></div>
+                <div class="flex justify-between"><span>2026-06-20</span><span>1,000 万</span></div>
+                <div class="flex justify-between"><span>2026-07-20</span><span>1,000 万</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div id="balance-modal" class="fixed inset-0 z-[70] hidden">
+      <div class="absolute inset-0 bg-black/40" data-close-balance></div>
+      <div class="absolute left-1/2 top-1/2 w-[82%] -translate-x-1/2 -translate-y-1/2 bg-white rounded-2xl shadow-2xl p-4">
+        <p class="text-[13px] font-semibold text-slate-900">账户余额查询</p>
+        <p class="text-[11px] text-slate-500 mt-2">账户：<span id="balance-acct" class="font-mono text-slate-700"></span></p>
+        <p class="text-[22px] font-bold text-blue-700 mt-2 tabular-nums">¥ <span id="balance-amount">0.00</span></p>
+        <button type="button" class="mt-4 w-full py-2.5 rounded-lg bg-blue-600 text-white text-sm" data-close-balance>我知道了</button>
+      </div>
+    </div>
+
+    <!-- 弹窗：产品信息 -->
+    <div id="modal-product-info" class="modal fixed inset-0 z-[60] hidden flex items-end justify-center">
+      <div class="absolute inset-0 z-[61] bg-black/40" data-close-modal></div>
+      <div class="relative z-[62] w-full max-w-[393px] bg-white rounded-t-[14px] shadow-[0_-4px_24px_rgba(0,0,0,0.12)] flex flex-col max-h-[min(76vh,640px)] animate-[slideUp_.25s_ease-out]">
+        <div class="pt-2 pb-1 flex justify-center shrink-0"><span class="w-9 h-1 rounded-full bg-slate-200"></span></div>
+        <div class="flex justify-between items-center px-4 pb-2 border-b border-slate-100 shrink-0">
+          <div>
+            <h3 class="text-[16px] font-semibold text-slate-900">产品信息</h3>
+            <p class="text-[11px] text-slate-400 mt-0.5">授信 · 结算 · 投行（节选）</p>
+          </div>
+          <button type="button" class="text-slate-400 p-1 min-w-[44px] min-h-[44px] flex items-center justify-center" data-close-modal aria-label="关闭"><i class="fa-solid fa-xmark text-lg"></i></button>
+        </div>
+        <div class="overflow-y-auto px-4 pt-3 space-y-3" style="padding-bottom:max(1.25rem, env(safe-area-inset-bottom));">
+          <div class="rounded-xl border border-slate-100 overflow-hidden">
+            <div class="bg-blue-50/80 px-3 py-2 flex justify-between items-center border-b border-blue-100/80">
+              <span class="text-[12px] font-semibold text-slate-900">流动资金贷款</span>
+              <span class="text-[11px] font-medium text-blue-700 bg-white px-2 py-0.5 rounded-full border border-blue-100">存续</span>
+            </div>
+            <div class="p-3 space-y-2 text-[12px]">
+              <div class="flex justify-between"><span class="text-slate-500">合同编号</span><span class="font-mono text-[11px] text-slate-800">SX-2025-SZ-00886</span></div>
+              <div class="flex justify-between"><span class="text-slate-500">授信余额</span><span class="font-semibold tabular-nums">9.07 亿元</span></div>
+              <div class="flex justify-between"><span class="text-slate-500">到期日</span><span>2027-06-30</span></div>
+              <div class="flex justify-between"><span class="text-slate-500">执行利率</span><span>LPR-45BP</span></div>
+            </div>
+          </div>
+          <div class="rounded-xl border border-slate-100 overflow-hidden">
+            <div class="bg-violet-50/60 px-3 py-2 flex justify-between items-center border-b border-violet-100/60">
+              <span class="text-[12px] font-semibold text-slate-900">票据贴现</span>
+              <span class="text-[11px] font-medium text-violet-700 bg-white px-2 py-0.5 rounded-full border border-violet-100">存续</span>
+            </div>
+            <div class="p-3 space-y-2 text-[12px]">
+              <div class="flex justify-between"><span class="text-slate-500">贴现余额</span><span class="font-semibold tabular-nums">4.88 亿元</span></div>
+              <div class="flex justify-between"><span class="text-slate-500">加权平均期限</span><span>142 天</span></div>
+            </div>
+          </div>
+          <div class="rounded-xl border border-slate-100 p-3 flex justify-between items-center">
+            <div>
+              <p class="text-[12px] font-medium text-slate-900">现金管理 · 回款通</p>
+              <p class="text-[11px] text-slate-500 mt-1">代收代付 · 自动清分</p>
+            </div>
+            <span class="text-[11px] font-medium text-emerald-700 bg-emerald-50 px-2 py-1 rounded-lg">在用</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 弹窗：客户提醒 -->
+    <div id="modal-alert-info" class="modal fixed inset-0 z-[60] hidden flex items-end justify-center">
+      <div class="absolute inset-0 z-[61] bg-black/40" data-close-modal></div>
+      <div class="relative z-[62] w-full max-w-[393px] bg-white rounded-t-[14px] shadow-[0_-4px_24px_rgba(0,0,0,0.12)] flex flex-col max-h-[min(76vh,640px)] animate-[slideUp_.25s_ease-out]">
+        <div class="pt-2 pb-1 flex justify-center shrink-0"><span class="w-9 h-1 rounded-full bg-slate-200"></span></div>
+        <div class="flex justify-between items-center px-4 pb-2 border-b border-slate-100 shrink-0">
+          <div>
+            <h3 class="text-[16px] font-semibold text-slate-900">客户提醒</h3>
+            <p class="text-[11px] text-slate-400 mt-0.5">待办 <span class="text-rose-600 font-medium">2</span> · 已读 5</p>
+          </div>
+          <button type="button" class="text-slate-400 p-1 min-w-[44px] min-h-[44px] flex items-center justify-center" data-close-modal aria-label="关闭"><i class="fa-solid fa-xmark text-lg"></i></button>
+        </div>
+        <div class="overflow-y-auto px-4 pt-3 space-y-2" style="padding-bottom:max(1.25rem, env(safe-area-inset-bottom));">
+          <div class="rounded-xl border-l-[3px] border-l-rose-500 bg-rose-50/40 border border-rose-100/80 p-3">
+            <div class="flex justify-between items-start gap-2">
+              <span class="text-[10px] font-medium text-rose-700 bg-white/80 px-1.5 py-0.5 rounded">高</span>
+              <span class="text-[10px] text-slate-400 shrink-0">2026-04-20</span>
+            </div>
+            <p class="text-[13px] font-semibold text-slate-900 mt-2">授信年检材料待补充</p>
+            <p class="text-[11px] text-slate-600 mt-1">CP/RAD 年检申报 · 缺审计报告电子版</p>
+            <p class="text-[10px] text-rose-600 mt-2">截止 2026-05-10</p>
+          </div>
+          <div class="rounded-xl border border-amber-100 bg-amber-50/30 p-3">
+            <div class="flex justify-between items-start">
+              <span class="text-[10px] font-medium text-amber-800 bg-amber-100/80 px-1.5 py-0.5 rounded">中</span>
+              <span class="text-[10px] text-slate-400">2026-04-12</span>
+            </div>
+            <p class="text-[13px] font-semibold text-slate-900 mt-2">反洗钱尽职调查到期复核</p>
+            <p class="text-[11px] text-slate-500 mt-1">尽调问卷待客户盖章回传</p>
+          </div>
+          <div class="rounded-xl border border-slate-100 bg-slate-50/50 p-3 opacity-90">
+            <div class="flex justify-between items-center">
+              <p class="text-[13px] font-medium text-slate-600">代发签约待电子签章</p>
+              <span class="text-[10px] text-slate-400">已读</span>
+            </div>
+            <p class="text-[11px] text-slate-400 mt-1">2026-03-28 · 薪福通</p>
+          </div>
+          <div class="rounded-xl border border-slate-100 p-3">
+            <div class="flex justify-between items-center">
+              <p class="text-[13px] font-medium text-slate-900">账户变更印鉴核验</p>
+              <span class="text-[10px] text-emerald-600">已办结</span>
+            </div>
+            <p class="text-[11px] text-slate-500 mt-1">2026-02-06</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <style>@keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }</style>
+
+    <div class="tab-bar">
+      <a class="tab-item" href="./workbench.html"><i class="fa-solid fa-table-columns text-lg"></i><div>工作台</div></a>
+      <a class="tab-item active" href="./customer-center.html"><i class="fa-regular fa-user text-lg"></i><div>客户中心</div></a>
+      <a class="tab-item" href="./marketing-center.html"><i class="fa-solid fa-bullhorn text-lg"></i><div>营销中心</div></a>
+      <a class="tab-item" href="./process-center.html"><i class="fa-solid fa-diagram-project text-lg"></i><div>流程中心</div></a>
+      <a class="tab-item" href="./management-center.html"><i class="fa-solid fa-gear text-lg"></i><div>管理中心</div></a>
+      <a class="tab-item" href="./parameter-center.html"><i class="fa-solid fa-sliders text-lg"></i><div>参数中心</div></a>
+    </div>
+  </div>
+
+  <script>
+    const params = new URLSearchParams(window.location.search);
+    const customer = params.get('customer') || '华兴科技集团';
+    const type = params.get('type') || 'managed';
+    const sci = params.get('sci') !== '0';
+    const activityParam = params.get('activity') || '';
+
+    document.getElementById('customer-name').textContent = customer;
+
+    const previsitWrap = document.getElementById('wrap-previsit');
+    const linkPrevisit = document.getElementById('link-previsit');
+    if (type === 'internal_other' || type === 'external') {
+      previsitWrap.classList.remove('hidden');
+      linkPrevisit.href = `./pre-visit-onepager.html?q=${encodeURIComponent(customer)}`;
+    }
+    const floatPrevisit = document.getElementById('float-previsit');
+    if (floatPrevisit) {
+      floatPrevisit.addEventListener('click', () => {
+        window.location.href = `./pre-visit-onepager.html?q=${encodeURIComponent(customer)}`;
+      });
+    }
+
+    const scrollArea = document.getElementById('scroll-area');
+    const floatTop = document.getElementById('float-top');
+    if (floatTop && scrollArea) {
+      floatTop.addEventListener('click', () => {
+        scrollArea.scrollTo({ top: 0, behavior: 'smooth' });
+      });
+    }
+
+    const blockPortrait = document.getElementById('block-portrait');
+    const tagKe = document.getElementById('tag-kechuang');
+    if (!sci && blockPortrait) blockPortrait.classList.add('hidden');
+    if (!sci && tagKe) tagKe.classList.add('hidden');
+
+    const activityWrap = document.getElementById('activity-tags-wrap');
+    const activityTags = document.getElementById('activity-tags');
+    if (activityParam && activityWrap && activityTags) {
+      const tags = activityParam.split(',').map((t) => t.trim()).filter(Boolean);
+      if (tags.length) {
+        activityWrap.classList.remove('hidden');
+        activityTags.innerHTML = tags.map((t) => `<span class="px-2 py-0.5 rounded-full bg-blue-50 text-blue-700 border border-blue-100">${t}</span>`).join('');
+      }
+    }
+
+    const team = document.getElementById('team-score');
+    const tech = document.getElementById('tech-score');
+    const plus = document.getElementById('plus-score');
+    const minus = document.getElementById('minus-score');
+    const total = document.getElementById('total-score');
+    function recalc() {
+      const t = Number(team?.value || 0) + Number(tech?.value || 0) + Number(plus?.value || 0) - Number(minus?.value || 0);
+      if (total) total.textContent = String(t);
+    }
+    [team, tech, plus, minus].forEach((el) => el && el.addEventListener('input', recalc));
+    recalc();
+
+    document.querySelectorAll('.modal-trigger').forEach((btn) => {
+      btn.addEventListener('click', () => {
+        const id = btn.getAttribute('data-modal');
+        document.getElementById(id)?.classList.remove('hidden');
+      });
+    });
+    document.querySelectorAll('[data-close-modal]').forEach((el) => {
+      el.addEventListener('click', () => {
+        document.querySelectorAll('.modal').forEach((m) => m.classList.add('hidden'));
+      });
+    });
+
+    const custInfoTabs = document.querySelectorAll('.cust-info-tab');
+    const custInfoPanes = document.querySelectorAll('.cust-info-pane');
+    custInfoTabs.forEach((btn) => {
+      btn.addEventListener('click', () => {
+        const paneId = btn.getAttribute('data-pane');
+        custInfoTabs.forEach((b) => {
+          const on = b === btn;
+          b.className = 'cust-info-tab rounded-lg py-2 text-[11px]';
+          if (on) b.classList.add('bg-white', 'text-blue-700', 'font-semibold', 'shadow-sm');
+          else b.classList.add('text-slate-600');
+        });
+        custInfoPanes.forEach((pane) => pane.classList.toggle('hidden', pane.id !== paneId));
+      });
+    });
+
+    const acctTabs = document.querySelectorAll('.acct-tab');
+    const acctPanes = document.querySelectorAll('.acct-pane');
+    acctTabs.forEach((btn) => {
+      btn.addEventListener('click', () => {
+        const paneId = btn.getAttribute('data-pane');
+        acctTabs.forEach((b) => {
+          const on = b === btn;
+          b.className = 'acct-tab rounded-lg py-2 text-[11px]';
+          if (on) b.classList.add('bg-white', 'text-blue-700', 'font-semibold', 'shadow-sm');
+          else b.classList.add('text-slate-600');
+        });
+        acctPanes.forEach((pane) => pane.classList.toggle('hidden', pane.id !== paneId));
+      });
+    });
+
+    const balanceModal = document.getElementById('balance-modal');
+    const balanceAcct = document.getElementById('balance-acct');
+    const balanceAmount = document.getElementById('balance-amount');
+    document.querySelectorAll('.balance-btn').forEach((btn) => {
+      btn.addEventListener('click', () => {
+        if (!balanceModal || !balanceAcct || !balanceAmount) return;
+        balanceAcct.textContent = btn.getAttribute('data-acct') || '';
+        balanceAmount.textContent = btn.getAttribute('data-balance') || '0.00';
+        balanceModal.classList.remove('hidden');
+      });
+    });
+    document.querySelectorAll('[data-close-balance]').forEach((el) => {
+      el.addEventListener('click', () => balanceModal?.classList.add('hidden'));
+    });
+
+    document.querySelectorAll('.detail-btn').forEach((btn) => {
+      btn.addEventListener('click', () => {
+        const acct = btn.getAttribute('data-acct') || '';
+        window.location.href = `./account-query.html?account=${encodeURIComponent(acct)}&type=detail&locked=1`;
+      });
+    });
+
+  </script>
+</body>
+</html>

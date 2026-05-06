@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>待办任务</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
+  <link rel="stylesheet" href="./styles.css" />
+</head>
+<body class="bg-slate-100 min-h-screen flex items-center justify-center p-6">
+  <div class="phone-shell">
+    <div class="notch"></div>
+    <div class="status-bar"><span>9:41</span><div class="flex gap-1"><i class="fa-solid fa-signal"></i><i class="fa-solid fa-wifi"></i><i class="fa-solid fa-battery-full"></i></div></div>
+    <div class="safe-content px-4 pt-4 pb-4">
+      <div class="flex items-center justify-between">
+        <h1 class="page-title">待办任务</h1>
+        <a href="./workbench.html" class="text-sm text-blue-600">返回</a>
+      </div>
+
+      <div class="mt-3 flex items-center gap-2 text-xs">
+        <button data-view="list" class="todo-view-btn px-2 py-1 rounded-md bg-blue-50 text-blue-600">列表视图</button>
+        <button data-view="calendar" class="todo-view-btn px-2 py-1 rounded-md bg-slate-100 text-slate-600">日历视图</button>
+      </div>
+
+      <div class="mt-3 flex gap-2 text-xs overflow-x-auto">
+        <button data-status="all" class="todo-status-btn px-2 py-1 rounded-full bg-blue-600 text-white whitespace-nowrap">全部</button>
+        <button data-status="pending" class="todo-status-btn px-2 py-1 rounded-full bg-slate-100 text-slate-600 whitespace-nowrap">待处理</button>
+        <button data-status="processing" class="todo-status-btn px-2 py-1 rounded-full bg-slate-100 text-slate-600 whitespace-nowrap">处理中</button>
+        <button data-status="done" class="todo-status-btn px-2 py-1 rounded-full bg-slate-100 text-slate-600 whitespace-nowrap">已完成</button>
+      </div>
+
+      <div id="todo-list-view" class="mt-3 space-y-3 text-sm">
+        <div data-task-status="pending" class="todo-task-card bg-rose-50 border border-rose-200 p-4 rounded-xl shadow-sm">
+          <div class="flex items-center justify-between">
+            <p class="font-semibold">开户尽调补件审批</p>
+            <span class="text-[10px] px-2 py-0.5 rounded-full bg-rose-100 text-rose-600">高优先级</span>
+          </div>
+          <p class="text-slate-600 mt-1">类型：开户尽调 · 关联客户：华兴科技集团</p>
+          <p class="text-rose-600 mt-1">截止：今日 18:00（临近截止）</p>
+          <p class="text-xs text-slate-500 mt-1">创建人：王晓琳 · 创建时间：2026-04-24 10:21</p>
+          <button class="mt-3 px-4 py-2 bg-blue-600 text-white rounded-lg">立即处理</button>
+        </div>
+
+        <div data-task-status="processing" class="todo-task-card bg-amber-50 border border-amber-200 p-4 rounded-xl shadow-sm">
+          <div class="flex items-center justify-between">
+            <p class="font-semibold">账户权限修改复核</p>
+            <span class="text-[10px] px-2 py-0.5 rounded-full bg-amber-100 text-amber-700">长期未处理</span>
+          </div>
+          <p class="text-slate-600 mt-1">类型：账户权限修改 · 关联客户：海拓物流有限公司</p>
+          <p class="text-slate-600 mt-1">截止：2026-04-27 12:00</p>
+          <p class="text-xs text-slate-500 mt-1">创建人：赵文杰 · 创建时间：2026-04-18 09:15</p>
+          <button class="mt-3 px-4 py-2 bg-blue-600 text-white rounded-lg">继续办理</button>
+        </div>
+
+        <div data-task-status="done" class="todo-task-card bg-emerald-50 border border-emerald-200 p-4 rounded-xl shadow-sm hidden">
+          <div class="flex items-center justify-between">
+            <p class="font-semibold">客户信息变更校验</p>
+            <span class="text-[10px] px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-700">已完成</span>
+          </div>
+          <p class="text-slate-600 mt-1">类型：客户信息变更 · 关联客户：华达连锁商贸</p>
+          <p class="text-slate-600 mt-1">截止：2026-04-20 16:00</p>
+          <p class="text-xs text-slate-500 mt-1">创建人：刘志航 · 创建时间：2026-04-19 11:30</p>
+          <button class="mt-3 px-4 py-2 bg-slate-600 text-white rounded-lg">查看详情</button>
+        </div>
+      </div>
+
+      <div id="todo-calendar-view" class="mt-3 hidden bg-white border border-slate-200 p-4 rounded-xl shadow-sm text-sm">
+        <div class="flex items-center justify-between">
+          <p class="font-semibold text-slate-800">日历视图 · 2026-04-24</p>
+          <span class="text-xs text-slate-500">可回溯历史日期</span>
+        </div>
+        <p class="text-xs text-slate-500 mt-1">展示发起时间至截止时间区间内，且未办结任务</p>
+        <div class="mt-3 space-y-2">
+          <div data-task-status="pending" class="todo-calendar-item p-2 rounded-lg bg-rose-50 border border-rose-200 text-rose-700">开户尽调补件审批 · 待处理 · 截止18:00</div>
+          <div data-task-status="processing" class="todo-calendar-item p-2 rounded-lg bg-amber-50 border border-amber-200 text-amber-700">账户权限修改复核 · 处理中 · 截止04-27</div>
+          <div data-task-status="done" class="todo-calendar-item p-2 rounded-lg bg-emerald-50 border border-emerald-200 text-emerald-700 hidden">客户信息变更校验 · 已完成 · 04-20办结</div>
+        </div>
+      </div>
+    </div>
+    <div class="tab-bar">
+      <a class="tab-item active" href="./workbench.html"><i class="fa-solid fa-table-columns text-lg"></i><div>工作台</div></a>
+      <a class="tab-item" href="./customer-center.html"><i class="fa-regular fa-user text-lg"></i><div>客户中心</div></a>
+      <a class="tab-item" href="./marketing-center.html"><i class="fa-solid fa-bullhorn text-lg"></i><div>营销中心</div></a>
+      <a class="tab-item" href="./process-center.html"><i class="fa-solid fa-diagram-project text-lg"></i><div>流程中心</div></a>
+      <a class="tab-item" href="./management-center.html"><i class="fa-solid fa-gear text-lg"></i><div>管理中心</div></a>
+      <a class="tab-item" href="./parameter-center.html"><i class="fa-solid fa-sliders text-lg"></i><div>参数中心</div></a>
+    </div>
+  </div>
+  <script>
+    const viewButtons = document.querySelectorAll('.todo-view-btn');
+    const statusButtons = document.querySelectorAll('.todo-status-btn');
+    const listView = document.getElementById('todo-list-view');
+    const calendarView = document.getElementById('todo-calendar-view');
+    const listCards = document.querySelectorAll('.todo-task-card');
+    const calendarItems = document.querySelectorAll('.todo-calendar-item');
+
+    function setActive(buttons, current, activeClasses, inactiveClasses) {
+      buttons.forEach((btn) => {
+        btn.classList.remove(...activeClasses);
+        btn.classList.add(...inactiveClasses);
+      });
+      current.classList.remove(...inactiveClasses);
+      current.classList.add(...activeClasses);
+    }
+
+    function applyStatus(status) {
+      listCards.forEach((card) => {
+        const matched = status === 'all' || card.dataset.taskStatus === status;
+        card.classList.toggle('hidden', !matched);
+      });
+      calendarItems.forEach((item) => {
+        const matched = status === 'all' || item.dataset.taskStatus === status;
+        item.classList.toggle('hidden', !matched);
+      });
+    }
+
+    function applyView(view) {
+      const isList = view !== 'calendar';
+      listView.classList.toggle('hidden', !isList);
+      calendarView.classList.toggle('hidden', isList);
+    }
+
+    function updateUrl(view, status) {
+      const params = new URLSearchParams(window.location.search);
+      params.set('view', view);
+      params.set('status', status);
+      history.replaceState(null, '', `${window.location.pathname}?${params.toString()}`);
+    }
+
+    viewButtons.forEach((btn) => {
+      btn.addEventListener('click', () => {
+        const currentStatusBtn = document.querySelector('.todo-status-btn.bg-blue-600') || statusButtons[0];
+        const status = currentStatusBtn.dataset.status;
+        const view = btn.dataset.view;
+        setActive(viewButtons, btn, ['bg-blue-50', 'text-blue-600'], ['bg-slate-100', 'text-slate-600']);
+        applyView(view);
+        updateUrl(view, status);
+      });
+    });
+
+    statusButtons.forEach((btn) => {
+      btn.addEventListener('click', () => {
+        const currentViewBtn = document.querySelector('.todo-view-btn.bg-blue-50') || viewButtons[0];
+        const view = currentViewBtn.dataset.view;
+        const status = btn.dataset.status;
+        setActive(statusButtons, btn, ['bg-blue-600', 'text-white'], ['bg-slate-100', 'text-slate-600']);
+        applyStatus(status);
+        updateUrl(view, status);
+      });
+    });
+
+    (function initFromQuery() {
+      const params = new URLSearchParams(window.location.search);
+      const view = ['list', 'calendar'].includes(params.get('view')) ? params.get('view') : 'list';
+      const status = ['all', 'pending', 'processing', 'done'].includes(params.get('status')) ? params.get('status') : 'all';
+
+      const viewBtn = document.querySelector(`.todo-view-btn[data-view="${view}"]`) || viewButtons[0];
+      const statusBtn = document.querySelector(`.todo-status-btn[data-status="${status}"]`) || statusButtons[0];
+
+      setActive(viewButtons, viewBtn, ['bg-blue-50', 'text-blue-600'], ['bg-slate-100', 'text-slate-600']);
+      setActive(statusButtons, statusBtn, ['bg-blue-600', 'text-white'], ['bg-slate-100', 'text-slate-600']);
+      applyView(view);
+      applyStatus(status);
+      updateUrl(view, status);
+    })();
+  </script>
+</body>
+</html>

@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>全量企业查询</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
+  <link rel="stylesheet" href="./styles.css" />
+</head>
+<body class="bg-[#e8ecf3] min-h-screen flex items-center justify-center p-6">
+  <div class="phone-shell">
+    <div class="notch"></div>
+    <div class="status-bar bg-white/95"><span>16:22</span><div class="flex gap-1"><i class="fa-solid fa-signal"></i><span>5G</span><i class="fa-solid fa-battery-full"></i></div></div>
+    <div class="safe-content px-4 pt-4 pb-4">
+      <div class="flex items-center justify-between">
+        <h1 class="page-title">全量企业查询</h1>
+        <a href="./customer-center.html" class="text-sm text-blue-600">返回</a>
+      </div>
+      <div class="mt-3 relative">
+        <input id="queryInput" class="w-full rounded-xl border border-slate-200 p-3 text-sm" placeholder="输入企业名称/统一社会信用代码" />
+        <i class="fa-solid fa-magnifying-glass absolute right-3 top-3.5 text-slate-400"></i>
+      </div>
+      <div id="enterprise-list" class="mt-3 space-y-3 text-sm"></div>
+      <div id="enterprise-empty" class="hidden mt-3 bg-white rounded-xl p-4 text-center text-sm text-slate-500">未找到相关企业，请尝试其他关键字</div>
+    </div>
+    <div class="tab-bar">
+      <a class="tab-item" href="./workbench.html"><i class="fa-solid fa-table-columns text-lg"></i><div>工作台</div></a>
+      <a class="tab-item active" href="./customer-center.html"><i class="fa-regular fa-user text-lg"></i><div>客户中心</div></a>
+      <a class="tab-item" href="./marketing-center.html"><i class="fa-solid fa-bullhorn text-lg"></i><div>营销中心</div></a>
+      <a class="tab-item" href="./process-center.html"><i class="fa-solid fa-diagram-project text-lg"></i><div>流程中心</div></a>
+      <a class="tab-item" href="./management-center.html"><i class="fa-solid fa-gear text-lg"></i><div>管理中心</div></a>
+      <a class="tab-item" href="./parameter-center.html"><i class="fa-solid fa-sliders text-lg"></i><div>参数中心</div></a>
+    </div>
+  </div>
+  <script>
+    const source = [
+      { name: '华兴科技集团', type: '行内', industry: '电子信息', scale: '大型' },
+      { name: '海拓物流有限公司', type: '行内', industry: '物流运输', scale: '中型' },
+      { name: '深蓝新能源科技', type: '行外', industry: '新能源', scale: '小型' }
+    ];
+    const list = document.getElementById('enterprise-list');
+    const empty = document.getElementById('enterprise-empty');
+    const input = document.getElementById('queryInput');
+
+    function render() {
+      const key = input.value.trim().toLowerCase();
+      const rows = source.filter((x) => x.name.toLowerCase().includes(key));
+      list.innerHTML = rows.map((x) => {
+        const ut = x.type === '行外' ? 'external' : 'internal_other';
+        return `
+        <a href="./customer-360.html?customer=${encodeURIComponent(x.name)}&type=${ut}" class="block bg-white rounded-xl p-3 shadow-sm">
+          <div class="flex items-center justify-between">
+            <p class="font-semibold text-slate-800">${x.name}</p>
+            <span class="text-[10px] px-2 py-0.5 rounded-full ${x.type === '行内' ? 'bg-blue-100 text-blue-700' : 'bg-slate-100 text-slate-700'}">${x.type}</span>
+          </div>
+          <p class="text-xs text-slate-500 mt-1">行业：${x.industry} · 规模：${x.scale}</p>
+        </a>
+      `;
+      }).join('');
+      empty.classList.toggle('hidden', rows.length > 0);
+    }
+
+    input.addEventListener('input', render);
+    render();
+  </script>
+</body>
+</html>

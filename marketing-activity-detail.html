@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>营销活动详情</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
+  <link rel="stylesheet" href="./styles.css" />
+</head>
+<body class="bg-[#e8ecf3] min-h-screen flex items-center justify-center p-6">
+  <div class="phone-shell">
+    <div class="notch"></div>
+    <div class="status-bar bg-white/95"><span>16:22</span><div class="flex gap-1"><i class="fa-solid fa-signal"></i><span>5G</span><i class="fa-solid fa-battery-full"></i></div></div>
+    <div class="safe-content px-4 pt-4 pb-4 overflow-y-auto">
+      <div class="flex items-center justify-between">
+        <h1 class="page-title">营销活动详情</h1>
+        <a href="./marketing-activity-management.html" class="text-sm text-blue-600">返回</a>
+      </div>
+
+      <div class="mt-3 bg-white rounded-2xl p-3 shadow-sm border border-slate-100">
+        <div class="flex items-start justify-between gap-2">
+          <p id="act-name" class="font-semibold text-slate-900 text-[15px]">科技金融创新营销活动</p>
+          <span id="act-status" class="text-[10px] px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-100 shrink-0">进行中</span>
+        </div>
+        <p id="act-desc" class="text-xs text-slate-400 mt-1">针对科技型企业的专项营销活动，重点推广科技金融产品和服务。</p>
+        <div class="mt-2 grid grid-cols-2 gap-2 text-[11px]">
+          <div class="rounded-lg bg-slate-50 p-2 border border-slate-100"><p class="text-slate-400">活动名额</p><p id="act-total" class="text-slate-800 mt-1">15 个</p></div>
+          <div class="rounded-lg bg-slate-50 p-2 border border-slate-100"><p class="text-slate-400">目标用户</p><p id="act-target-user" class="text-slate-800 mt-1">科技型企业、高新技术企业</p></div>
+          <div class="rounded-lg bg-slate-50 p-2 border border-slate-100 col-span-2"><p class="text-slate-400">活动奖励</p><p id="act-reward" class="text-slate-800 mt-1">完成活动目标可获得科技金融专项奖励</p></div>
+        </div>
+      </div>
+
+      <div class="mt-3 bg-white rounded-2xl p-3 shadow-sm border border-slate-100">
+        <div class="flex items-center justify-between">
+          <p class="text-sm font-semibold text-slate-800">活动客户清单</p>
+          <span id="cust-count" class="text-[10px] text-slate-400">共 3 位</span>
+        </div>
+        <div id="customer-list" class="mt-2 space-y-2"></div>
+      </div>
+    </div>
+
+    <div class="tab-bar">
+      <a class="tab-item" href="./workbench.html"><i class="fa-solid fa-table-columns text-lg"></i><div>工作台</div></a>
+      <a class="tab-item" href="./customer-center.html"><i class="fa-regular fa-user text-lg"></i><div>客户中心</div></a>
+      <a class="tab-item active" href="./marketing-center.html"><i class="fa-solid fa-bullhorn text-lg"></i><div>营销中心</div></a>
+      <a class="tab-item" href="./process-center.html"><i class="fa-solid fa-diagram-project text-lg"></i><div>流程中心</div></a>
+      <a class="tab-item" href="./management-center.html"><i class="fa-solid fa-gear text-lg"></i><div>管理中心</div></a>
+      <a class="tab-item" href="./parameter-center.html"><i class="fa-solid fa-sliders text-lg"></i><div>参数中心</div></a>
+    </div>
+  </div>
+
+  <script>
+    const activityData = {
+      mk1: {
+        name: '科技金融创新营销活动',
+        status: '进行中',
+        desc: '针对科技型企业的专项营销活动，重点推广科技金融产品和服务，支持科技创新企业发展。',
+        targetUser: '科技型企业、高新技术企业',
+        reward: '完成活动目标可获得科技金融专项奖励',
+        total: 15,
+        tags: ['科技型', '重点客群', '高成长'],
+        customers: [
+          { name: '杭州恒信集团有限公司', type: 'managed', sci: '1', progress: '已反馈', manager: '王乐乐', labels: ['科技金融创新营销活动', '进行中'] },
+          { name: '华兴科技集团', type: 'managed', sci: '1', progress: '待反馈', manager: '李佳琪', labels: ['科技金融创新营销活动', '进行中'] },
+          { name: '博远精密制造', type: 'internal_other', sci: '0', progress: '已反馈', manager: '周志远', labels: ['科技金融创新营销活动', '进行中'] },
+        ],
+      },
+      mk2: {
+        name: '中小企业融资支持活动',
+        status: '进行中',
+        desc: '为中小企业提供融资支持，包括流动资金贷款、设备融资租赁等多种金融产品。',
+        targetUser: '中小企业、普惠客群',
+        reward: '达成融资投放目标可获得普惠金融奖励',
+        total: 35,
+        tags: ['普惠', '中小企业'],
+        customers: [
+          { name: '浙商机电设备', type: 'managed', sci: '0', progress: '待反馈', manager: '郑凯', labels: ['中小企业融资支持活动', '进行中'] },
+          { name: '宏达材料科技', type: 'external', sci: '1', progress: '已反馈', manager: '王乐乐', labels: ['中小企业融资支持活动', '进行中'] },
+        ],
+      },
+    };
+
+    const id = new URLSearchParams(window.location.search).get('id') || 'mk1';
+    const data = activityData[id] || activityData.mk1;
+    document.getElementById('act-name').textContent = data.name;
+    document.getElementById('act-status').textContent = data.status;
+    document.getElementById('act-desc').textContent = data.desc;
+    document.getElementById('act-total').textContent = `${data.total} 个`;
+    document.getElementById('act-target-user').textContent = data.targetUser;
+    document.getElementById('act-reward').textContent = data.reward;
+    document.getElementById('cust-count').textContent = `共 ${data.customers.length} 位`;
+
+    const cList = document.getElementById('customer-list');
+    cList.innerHTML = data.customers.map((c) => {
+      const labels = encodeURIComponent(c.labels.join(','));
+      const url = `./customer-360.html?customer=${encodeURIComponent(c.name)}&type=${encodeURIComponent(c.type)}&sci=${encodeURIComponent(c.sci)}&activity=${labels}`;
+      return `
+        <a href="${url}" class="block rounded-xl border border-slate-100 p-2.5 bg-slate-50/60">
+          <div class="flex items-center justify-between">
+            <p class="text-[13px] font-medium text-slate-800">${c.name}</p>
+            <span class="text-[10px] ${c.progress === '已反馈' ? 'text-emerald-700 bg-emerald-50 border-emerald-100' : 'text-amber-700 bg-amber-50 border-amber-100'} border px-2 py-0.5 rounded-full">${c.progress}</span>
+          </div>
+          <p class="text-[11px] text-slate-500 mt-1">客户经理：${c.manager}</p>
+        </a>`;
+    }).join('');
+  </script>
+</body>
+</html>

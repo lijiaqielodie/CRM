@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>待办任务详情</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
+  <link rel="stylesheet" href="./styles.css" />
+</head>
+<body class="bg-[#e8ecf3] min-h-screen flex items-center justify-center p-6">
+  <div class="phone-shell">
+    <div class="notch"></div>
+    <div class="status-bar bg-white/95"><span>16:22</span><div class="flex gap-1"><i class="fa-solid fa-signal"></i><span>5G</span><i class="fa-solid fa-battery-full"></i></div></div>
+    <div class="safe-content px-4 pt-4 pb-4">
+      <div class="flex items-center justify-between">
+        <h1 class="page-title">任务详情</h1>
+        <a href="./workbench.html" class="text-sm text-blue-600">返回</a>
+      </div>
+
+      <div class="mt-3 bg-white rounded-2xl p-4 shadow-sm text-sm space-y-2">
+        <div class="flex items-center justify-between">
+          <p id="task-title" class="font-semibold text-slate-800">开户尽调补件审批</p>
+          <span id="task-priority" class="text-[10px] px-2 py-0.5 rounded-full bg-rose-100 text-rose-600">高优先级</span>
+        </div>
+        <p id="task-type"><span class="text-slate-500">任务类型：</span>开户尽调</p>
+        <p id="task-customer"><span class="text-slate-500">关联客户：</span>华兴科技集团</p>
+        <p id="task-deadline"><span class="text-slate-500">截止时间：</span>2026-04-24 18:00</p>
+        <p id="task-status"><span class="text-slate-500">当前状态：</span>待处理</p>
+        <p><span class="text-slate-500">创建人：</span>王晓琳</p>
+      </div>
+
+      <div class="mt-3 bg-white rounded-2xl p-4 shadow-sm text-sm">
+        <p class="font-semibold text-slate-800">任务描述</p>
+        <p id="task-desc" class="text-slate-600 mt-2 leading-6">请核验客户最新尽调资料完整性，补充缺失材料后提交复核。</p>
+      </div>
+
+      <div class="mt-3 bg-white rounded-2xl p-4 shadow-sm text-sm">
+        <div class="flex items-center justify-between">
+          <p class="font-semibold text-slate-800">上传资料</p>
+          <span class="text-xs text-slate-500">支持图片/PDF</span>
+        </div>
+        <label for="file-upload" class="mt-3 block border border-dashed border-slate-300 rounded-xl p-3 text-center text-slate-500 cursor-pointer">
+          <i class="fa-solid fa-cloud-arrow-up text-blue-500 mr-1"></i>点击上传附件
+        </label>
+        <input id="file-upload" type="file" class="hidden" multiple />
+        <div id="file-list" class="mt-2 space-y-2"></div>
+      </div>
+
+      <div class="mt-3 bg-white rounded-2xl p-4 shadow-sm text-sm">
+        <p class="font-semibold text-slate-800">处理意见</p>
+        <textarea class="w-full mt-2 p-3 rounded-xl border border-slate-200 h-24" placeholder="请输入处理意见"></textarea>
+      </div>
+
+      <div class="mt-4 grid grid-cols-2 gap-3">
+        <button class="py-3 rounded-xl bg-slate-100 text-slate-700">退回补充</button>
+        <button class="py-3 rounded-xl bg-blue-600 text-white">提交办理</button>
+      </div>
+    </div>
+    <div class="tab-bar">
+      <a class="tab-item active" href="./workbench.html"><i class="fa-solid fa-table-columns text-lg"></i><div>工作台</div></a>
+      <a class="tab-item" href="./customer-center.html"><i class="fa-regular fa-user text-lg"></i><div>客户中心</div></a>
+      <a class="tab-item" href="./marketing-center.html"><i class="fa-solid fa-bullhorn text-lg"></i><div>营销中心</div></a>
+      <a class="tab-item" href="./process-center.html"><i class="fa-solid fa-diagram-project text-lg"></i><div>流程中心</div></a>
+      <a class="tab-item" href="./management-center.html"><i class="fa-solid fa-gear text-lg"></i><div>管理中心</div></a>
+      <a class="tab-item" href="./parameter-center.html"><i class="fa-solid fa-sliders text-lg"></i><div>参数中心</div></a>
+    </div>
+  </div>
+  <script>
+    const taskMap = {
+      T20260424001: { title: '开户尽调补件审批', type: '开户尽调', customer: '华兴科技集团', deadline: '2026-04-24 18:00', status: '待处理', desc: '请核验客户最新尽调资料完整性，补充缺失材料后提交复核。', priority: '高优先级' },
+      T20260418001: { title: '账户权限修改复核', type: '账户权限修改', customer: '海拓物流有限公司', deadline: '2026-04-27 12:00', status: '处理中', desc: '核对权限变更申请单与授权链路，确认双人复核记录后办理。', priority: '长期未处理' },
+      T20260419001: { title: '客户信息变更校验', type: '客户信息变更', customer: '华达连锁商贸', deadline: '2026-04-20 16:00', status: '已完成', desc: '客户工商信息已更新，完成一致性校验并归档。', priority: '已完成' }
+    };
+
+    const params = new URLSearchParams(window.location.search);
+    const task = taskMap[params.get('id')] || taskMap.T20260424001;
+    document.getElementById('task-title').textContent = task.title;
+    document.getElementById('task-type').innerHTML = `<span class="text-slate-500">任务类型：</span>${task.type}`;
+    document.getElementById('task-customer').innerHTML = `<span class="text-slate-500">关联客户：</span>${task.customer}`;
+    document.getElementById('task-deadline').innerHTML = `<span class="text-slate-500">截止时间：</span>${task.deadline}`;
+    document.getElementById('task-status').innerHTML = `<span class="text-slate-500">当前状态：</span>${task.status}`;
+    document.getElementById('task-desc').textContent = task.desc;
+    document.getElementById('task-priority').textContent = task.priority;
+
+    const fileInput = document.getElementById('file-upload');
+    const fileList = document.getElementById('file-list');
+    fileInput.addEventListener('change', () => {
+      fileList.innerHTML = '';
+      Array.from(fileInput.files).forEach((file) => {
+        const node = document.createElement('div');
+        node.className = 'p-2 rounded-lg bg-slate-50 border border-slate-200 flex items-center justify-between text-xs';
+        node.innerHTML = `<span class="truncate pr-2">${file.name}</span><span class="text-slate-500">${Math.ceil(file.size / 1024)}KB</span>`;
+        fileList.appendChild(node);
+      });
+    });
+  </script>
+</body>
+</html>

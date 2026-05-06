@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>问题上报与协作</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
+  <link rel="stylesheet" href="./styles.css" />
+</head>
+<body class="bg-[#e8ecf3] min-h-screen flex items-center justify-center p-6">
+  <div class="phone-shell">
+    <div class="notch"></div>
+    <div class="status-bar bg-white/95"><span>16:22</span><div class="flex gap-1"><i class="fa-solid fa-signal"></i><span>5G</span><i class="fa-solid fa-battery-full"></i></div></div>
+    <div class="safe-content px-4 pt-4 pb-4 overflow-y-auto">
+      <div class="flex items-center justify-between">
+        <h1 class="page-title">问题上报与协作</h1>
+        <a href="./weekly-report.html" class="text-sm text-blue-600">返回</a>
+      </div>
+
+      <div class="mt-2 bg-white rounded-xl border border-slate-100 p-2.5">
+        <p class="text-xs text-slate-500 mb-1.5">问题处理进度与历史查询</p>
+        <div class="grid grid-cols-[1fr_90px] gap-2 text-xs">
+          <input id="search-input" class="rounded-md border border-slate-200 px-2 py-1.5" placeholder="搜索客户/项目/标题" />
+          <select id="cat-filter" class="rounded-md border border-slate-200 px-2 py-1.5">
+            <option value="all">全部分类</option>
+            <option value="业务支持">业务支持</option>
+            <option value="资源协调">资源协调</option>
+            <option value="技术问题">技术问题</option>
+            <option value="政策咨询">政策咨询</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="mt-3 grid grid-cols-4 gap-2 text-[11px] text-center">
+        <button class="status-btn py-1.5 rounded-full bg-blue-600 text-white" data-status="待处理">待处理</button>
+        <button class="status-btn py-1.5 rounded-full bg-slate-100 text-slate-600" data-status="处理中">处理中</button>
+        <button class="status-btn py-1.5 rounded-full bg-slate-100 text-slate-600" data-status="已解决">已解决</button>
+        <button class="status-btn py-1.5 rounded-full bg-slate-100 text-slate-600" data-status="已关闭">已关闭</button>
+      </div>
+
+      <div id="issue-list" class="mt-3 space-y-2 text-sm"></div>
+
+      <button id="btn-open-modal" class="mt-3 w-full py-3 rounded-xl bg-blue-600 text-white text-sm font-medium">问题上报</button>
+    </div>
+    <div class="tab-bar">
+      <a class="tab-item active" href="./workbench.html"><i class="fa-solid fa-table-columns text-lg"></i><div>工作台</div></a>
+      <a class="tab-item" href="./customer-center.html"><i class="fa-regular fa-user text-lg"></i><div>客户中心</div></a>
+      <a class="tab-item" href="./marketing-center.html"><i class="fa-solid fa-bullhorn text-lg"></i><div>营销中心</div></a>
+      <a class="tab-item" href="./process-center.html"><i class="fa-solid fa-diagram-project text-lg"></i><div>流程中心</div></a>
+      <a class="tab-item" href="./management-center.html"><i class="fa-solid fa-gear text-lg"></i><div>管理中心</div></a>
+      <a class="tab-item" href="./parameter-center.html"><i class="fa-solid fa-sliders text-lg"></i><div>参数中心</div></a>
+    </div>
+  </div>
+
+  <div id="issue-modal" class="hidden fixed inset-0 bg-black/50 z-50 flex items-center justify-center">
+    <div class="w-[350px] bg-white rounded-2xl p-4">
+      <div class="flex items-center justify-between">
+        <p class="font-semibold text-slate-800">问题上报</p>
+        <button id="btn-close-modal" class="text-slate-400"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+      <div class="mt-2 grid grid-cols-2 gap-2 text-xs">
+        <select class="rounded-lg border border-slate-200 px-2 py-2">
+          <option>问题分类</option><option>业务支持</option><option>资源协调</option><option>技术问题</option><option>政策咨询</option>
+        </select>
+        <select class="rounded-lg border border-slate-200 px-2 py-2">
+          <option>优先级</option><option>高</option><option>中</option><option>低</option>
+        </select>
+      </div>
+      <input class="mt-2 w-full rounded-lg border border-slate-200 px-2 py-2 text-xs" placeholder="关联客户或项目（可选）" />
+      <textarea class="mt-2 w-full rounded-lg border border-slate-200 px-2 py-2 text-xs h-20" placeholder="问题详细描述（必填）"></textarea>
+      <button id="btn-submit-modal" class="mt-3 w-full py-2.5 rounded-lg bg-blue-600 text-white text-sm">提交问题</button>
+    </div>
+  </div>
+
+  <script>
+    const issues = [
+      { id: 'I001', title: '政策咨询：园区贴息口径不一致', cat: '政策咨询', status: '待处理', level: '高', rel: '上海市社保基金', progress: '已上报，待政策岗回复' },
+      { id: 'I002', title: '资源协调：重点客户审批绿色通道', cat: '资源协调', status: '处理中', level: '中', rel: '科创授信专项', progress: '总行审批排队中' },
+      { id: 'I003', title: '技术问题：拜访影像上传偶发失败', cat: '技术问题', status: '已解决', level: '中', rel: '客户拜访模块', progress: '补丁已上线，待验证' },
+      { id: 'I004', title: '业务支持：授信尽调模板口径确认', cat: '业务支持', status: '已关闭', level: '低', rel: '尽调助手', progress: '问题已归档' },
+    ];
+
+    let activeStatus = '待处理';
+    const searchInput = document.getElementById('search-input');
+    const catFilter = document.getElementById('cat-filter');
+
+    function renderIssues() {
+      const kw = (searchInput.value || '').trim();
+      const cat = catFilter.value;
+      const list = issues.filter((i) =>
+        i.status === activeStatus &&
+        (cat === 'all' || i.cat === cat) &&
+        (!kw || `${i.title}${i.rel}${i.progress}`.includes(kw))
+      );
+      const box = document.getElementById('issue-list');
+      if (!list.length) {
+        box.innerHTML = '<p class="text-xs text-slate-400">暂无符合条件的问题</p>';
+        return;
+      }
+      box.innerHTML = list.map((x) => `
+        <a href="./issue-detail.html?id=${x.id}" class="block bg-white rounded-xl border border-slate-100 p-3">
+          <div class="flex items-center justify-between">
+            <p class="font-semibold text-slate-800">${x.title}</p>
+            <span class="text-[10px] px-2 py-0.5 rounded-full ${x.level === '高' ? 'bg-rose-100 text-rose-700' : x.level === '中' ? 'bg-amber-100 text-amber-700' : 'bg-slate-100 text-slate-600'}">${x.level}优先级</span>
+          </div>
+          <p class="text-xs text-slate-500 mt-1">分类：${x.cat} · 关联：${x.rel}</p>
+          <p class="text-xs text-slate-500 mt-1">状态：${x.status} · 进度：${x.progress}</p>
+        </a>
+      `).join('');
+    }
+
+    document.querySelectorAll('.status-btn').forEach((btn) => {
+      btn.addEventListener('click', () => {
+        activeStatus = btn.dataset.status;
+        document.querySelectorAll('.status-btn').forEach((b) => {
+          const on = b === btn;
+          b.classList.toggle('bg-blue-600', on);
+          b.classList.toggle('text-white', on);
+          b.classList.toggle('bg-slate-100', !on);
+          b.classList.toggle('text-slate-600', !on);
+        });
+        renderIssues();
+      });
+    });
+
+    searchInput.addEventListener('input', renderIssues);
+    catFilter.addEventListener('change', renderIssues);
+
+    const modal = document.getElementById('issue-modal');
+    document.getElementById('btn-open-modal').addEventListener('click', () => modal.classList.remove('hidden'));
+    document.getElementById('btn-close-modal').addEventListener('click', () => modal.classList.add('hidden'));
+    document.getElementById('btn-submit-modal').addEventListener('click', () => {
+      modal.classList.add('hidden');
+      alert('问题已上报（示意）');
+    });
+
+    renderIssues();
+  </script>
+</body>
+</html>

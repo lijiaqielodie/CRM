@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>分析圈客</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
+  <link rel="stylesheet" href="./styles.css" />
+</head>
+<body class="bg-[#e8ecf3] min-h-screen flex items-center justify-center p-6">
+  <div class="phone-shell">
+    <div class="notch"></div>
+    <div class="status-bar bg-white/95"><span>16:22</span><div class="flex gap-1"><i class="fa-solid fa-signal"></i><span>5G</span><i class="fa-solid fa-battery-full"></i></div></div>
+    <div class="safe-content px-3 pt-3 pb-4 overflow-hidden relative flex flex-col">
+      <div class="flex items-center justify-between shrink-0">
+        <h1 class="text-[18px] font-bold text-slate-900">分析圈客</h1>
+        <a href="./marketing-center.html" class="text-sm text-blue-600">返回</a>
+      </div>
+
+      <div class="mt-2 grid grid-cols-[110px_1fr] gap-2 shrink-0">
+        <select class="rounded-lg border border-slate-200 p-2 text-xs bg-white">
+          <option>上海市浦东新区</option>
+          <option>深圳市南山区</option>
+        </select>
+        <input id="search-enterprise" class="rounded-lg border border-slate-200 p-2 text-xs" placeholder="搜索客户名称" />
+      </div>
+
+      <div id="map-viewport" class="mt-2 relative rounded-xl border border-slate-200 bg-slate-200 overflow-hidden flex-1 min-h-[520px] touch-none select-none">
+        <!-- 比例尺示意 -->
+        <div class="absolute right-2 bottom-28 z-30 px-2 py-1 rounded bg-white/90 border border-slate-200 text-[10px] text-slate-600 pointer-events-none">
+          <span id="scale-readout">比例尺 100%</span>
+        </div>
+
+        <div id="map-inner" class="absolute left-1/2 top-1/2 w-[140%] h-[140%] will-change-transform">
+          <img src="./assets/c__Users_Administrator_AppData_Roaming_Cursor_User_workspaceStorage_f9fa7236509743ebec2f85105b34f7a8_images_image-9a3a2036-abf4-4378-a54e-13167d58ebf1.png" class="absolute inset-0 w-full h-full object-cover pointer-events-none" draggable="false" alt="地图底图" />
+          <div id="pan-hit" class="absolute inset-0 z-[8] cursor-grab touch-none active:cursor-grabbing"></div>
+          <div id="point-layer" class="absolute inset-0 z-10 pointer-events-none"></div>
+        </div>
+
+        <!-- 框选矩形（viewport 坐标） -->
+        <div id="select-rect" class="hidden absolute border-2 border-dashed border-blue-600 bg-blue-500/15 z-[35] pointer-events-none rounded-sm"></div>
+
+        <!-- 指南针示意 -->
+        <div class="absolute left-16 top-2 z-20 w-8 h-8 rounded-full bg-white/95 border border-slate-200 flex items-center justify-center text-[10px] font-bold text-slate-600 pointer-events-none">N</div>
+
+        <div id="map-zoom-controls" class="absolute left-2 top-2 flex flex-col gap-1 z-40 pointer-events-auto">
+          <button id="zoom-in" type="button" class="w-8 h-8 rounded-lg bg-white/95 border border-slate-200 text-slate-700 text-sm shadow-sm active:bg-slate-50">+</button>
+          <button id="zoom-out" type="button" class="w-8 h-8 rounded-lg bg-white/95 border border-slate-200 text-slate-700 text-sm shadow-sm active:bg-slate-50">−</button>
+        </div>
+        <div id="map-layer-controls" class="absolute right-2 top-2 z-40 text-[10px] flex gap-1 pointer-events-auto">
+          <button type="button" data-layer="normal" class="map-layer-btn px-2 py-1 rounded-lg bg-white border border-slate-200 shadow-sm">地图</button>
+          <button type="button" data-layer="satellite" class="map-layer-btn px-2 py-1 rounded-lg bg-white/70 border border-slate-200">卫星</button>
+          <button type="button" data-layer="3d" class="map-layer-btn px-2 py-1 rounded-lg bg-white/70 border border-slate-200">三维</button>
+        </div>
+
+        <div id="enterprise-card" class="hidden absolute left-2 top-14 z-50 w-[235px] rounded-xl bg-white border border-slate-200 shadow-lg p-2.5 pointer-events-auto">
+          <p id="card-name" class="text-[12px] font-semibold text-slate-900"></p>
+          <p id="card-address" class="text-[10px] text-slate-500 mt-1"></p>
+          <div id="card-tags" class="mt-1.5 flex flex-wrap gap-1 text-[9px]"></div>
+          <p id="card-scale" class="text-[10px] text-slate-600 mt-1"></p>
+          <p id="card-biz" class="text-[10px] text-slate-600 mt-1"></p>
+          <div class="mt-2 grid grid-cols-3 gap-1 text-[10px]">
+            <button type="button" class="py-1 rounded-md bg-slate-100 text-slate-700">添加跟踪</button>
+            <button type="button" id="btn-view-detail" class="py-1 rounded-md bg-blue-600 text-white">查看详情</button>
+            <button type="button" class="py-1 rounded-md bg-emerald-600 text-white">发起拜访</button>
+          </div>
+        </div>
+
+        <!-- 框选计数条 -->
+        <div id="box-hint" class="hidden absolute left-1/2 -translate-x-1/2 top-12 z-50 px-3 py-1.5 rounded-full bg-slate-900/85 text-white text-[11px] pointer-events-none"></div>
+
+        <div id="filter-panel" class="absolute left-2 bottom-2 z-50 w-[250px] rounded-xl bg-white border border-slate-200 p-2.5 shadow-md pointer-events-auto">
+          <div class="flex items-center justify-between">
+            <p class="text-[11px] font-semibold text-slate-800">标签筛选</p>
+            <button type="button" id="save-filter" class="text-[10px] text-blue-600">保存方案</button>
+          </div>
+          <div id="filter-tags" class="mt-1.5 flex flex-wrap gap-1 text-[10px]"></div>
+          <div class="mt-2 flex gap-1">
+            <button type="button" id="btn-box-select" class="flex-1 py-1.5 rounded-md bg-slate-100 text-[10px] text-slate-700">框选企业</button>
+            <button type="button" id="btn-note" class="flex-1 py-1.5 rounded-md bg-slate-100 text-[10px] text-slate-700">批量加便签</button>
+          </div>
+          <div class="mt-1 flex gap-1">
+            <button type="button" id="btn-track" class="flex-1 py-1.5 rounded-md bg-blue-600 text-[10px] text-white">加入跟踪清单</button>
+            <button type="button" id="btn-create-task" class="flex-1 py-1.5 rounded-md bg-emerald-600 text-[10px] text-white">一键创建营销任务</button>
+          </div>
+          <p class="mt-1 text-[9px] text-slate-400">说明：原型模拟地图交互；接入百度地图后替换为 JS API。</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="tab-bar">
+      <a class="tab-item" href="./workbench.html"><i class="fa-solid fa-table-columns text-lg"></i><div>工作台</div></a>
+      <a class="tab-item" href="./customer-center.html"><i class="fa-regular fa-user text-lg"></i><div>客户中心</div></a>
+      <a class="tab-item active" href="./marketing-center.html"><i class="fa-solid fa-bullhorn text-lg"></i><div>营销中心</div></a>
+      <a class="tab-item" href="./process-center.html"><i class="fa-solid fa-diagram-project text-lg"></i><div>流程中心</div></a>
+      <a class="tab-item" href="./management-center.html"><i class="fa-solid fa-gear text-lg"></i><div>管理中心</div></a>
+      <a class="tab-item" href="./parameter-center.html"><i class="fa-solid fa-sliders text-lg"></i><div>参数中心</div></a>
+    </div>
+  </div>
+
+  <script>
+    const points = [
+      { name: '广州新材料科技有限公司', x: 70, y: 18, type: '科技金融', holder: '我的管户', scale: '大型', biz: '新材料研发', address: '浦东新区华夏中路1号', ctype: 'managed', sci: '1' },
+      { name: '上海联测通信有限公司', x: 35, y: 26, type: '科技金融', holder: '行内非我管户', scale: '中型', biz: '通信设备', address: '浦东新区张江路88号', ctype: 'internal_other', sci: '1' },
+      { name: '东联绿色能源有限公司', x: 59, y: 64, type: '绿色金融', holder: '行外客户', scale: '中型', biz: '新能源发电', address: '浦东新区环湖西二路', ctype: 'external', sci: '0' },
+      { name: '普惠智造有限公司', x: 23, y: 70, type: '普惠金融', holder: '我的管户', scale: '小型', biz: '精密加工', address: '浦东新区康桥路66号', ctype: 'managed', sci: '0' },
+      { name: '科达装备实业有限公司', x: 75, y: 76, type: '科技金融', holder: '行内非我管户', scale: '大型', biz: '自动化装备', address: '浦东新区龙阳路', ctype: 'internal_other', sci: '1' },
+    ];
+    const typeColor = { 科技金融: 'border-blue-500 bg-blue-500', 普惠金融: 'border-emerald-500 bg-emerald-500', 绿色金融: 'border-green-600 bg-green-600' };
+    const holderColor = { 我的管户: 'bg-blue-50 text-blue-700 border-blue-100', 行内非我管户: 'bg-amber-50 text-amber-700 border-amber-100', 行外客户: 'bg-slate-50 text-slate-700 border-slate-200' };
+    const tags = ['科技金融', '普惠金融', '绿色金融'];
+    const selectedTags = new Set(tags);
+
+    let zoom = 1;
+    let panX = 0;
+    let panY = 0;
+
+    let boxMode = false;
+    let boxDrawing = false;
+    let boxStart = { x: 0, y: 0 };
+
+    let panning = false;
+    let panStart = { x: 0, y: 0, px: 0, py: 0 };
+
+    const mapViewport = document.getElementById('map-viewport');
+    const mapInner = document.getElementById('map-inner');
+    const panHit = document.getElementById('pan-hit');
+    const layer = document.getElementById('point-layer');
+    const card = document.getElementById('enterprise-card');
+    const fTags = document.getElementById('filter-tags');
+    const searchInput = document.getElementById('search-enterprise');
+    const rectEl = document.getElementById('select-rect');
+    const scaleReadout = document.getElementById('scale-readout');
+    const boxHint = document.getElementById('box-hint');
+
+    function applyMapTransform() {
+      mapInner.style.transform = `translate(calc(-50% + ${panX}px), calc(-50% + ${panY}px)) scale(${zoom})`;
+      scaleReadout.textContent = `比例尺 ${Math.round(zoom * 100)}%`;
+    }
+
+    function renderTagFilters() {
+      fTags.innerHTML = tags.map((t) => `<button type="button" data-tag="${t}" class="tag-btn px-2 py-1 rounded-full border ${selectedTags.has(t) ? 'bg-slate-900 text-white border-slate-900' : 'bg-white text-slate-600 border-slate-200'}">${t}</button>`).join('');
+      document.querySelectorAll('.tag-btn').forEach((b) => b.addEventListener('click', () => {
+        const t = b.dataset.tag;
+        if (selectedTags.has(t)) selectedTags.delete(t); else selectedTags.add(t);
+        renderTagFilters();
+        renderPoints();
+      }));
+    }
+
+    function visiblePoints() {
+      const kw = (searchInput.value || '').trim();
+      return points.filter((p) => selectedTags.has(p.type) && (!kw || p.name.includes(kw)));
+    }
+
+    function showCard(p) {
+      document.getElementById('card-name').textContent = p.name;
+      document.getElementById('card-address').textContent = p.address;
+      document.getElementById('card-scale').textContent = `规模：${p.scale}`;
+      document.getElementById('card-biz').textContent = `主要业务：${p.biz}`;
+      document.getElementById('card-tags').innerHTML = [
+        `<span class="px-1.5 py-0.5 rounded border ${holderColor[p.holder]}">${p.holder}</span>`,
+        `<span class="px-1.5 py-0.5 rounded bg-slate-100 text-slate-700 border border-slate-200">${p.type}</span>`,
+      ].join('');
+
+      const viewBtn = document.getElementById('btn-view-detail');
+      if (p.holder === '我的管户') {
+        viewBtn.disabled = false;
+        viewBtn.className = 'py-1 rounded-md bg-blue-600 text-white';
+        viewBtn.textContent = '查看详情';
+        viewBtn.onclick = () => {
+          window.location.href = `./customer-360.html?customer=${encodeURIComponent(p.name)}&type=${encodeURIComponent(p.ctype)}&sci=${encodeURIComponent(p.sci)}`;
+        };
+      } else {
+        viewBtn.disabled = true;
+        viewBtn.className = 'py-1 rounded-md bg-slate-200 text-slate-500';
+        viewBtn.textContent = '无权限查看';
+      }
+      card.classList.remove('hidden');
+    }
+
+    let markerEls = [];
+
+    function renderPoints() {
+      layer.innerHTML = '';
+      markerEls = [];
+      visiblePoints().forEach((p) => {
+        const wrap = document.createElement('div');
+        wrap.className = 'marker absolute cursor-pointer z-20 pointer-events-auto';
+        wrap.style.left = `${p.x}%`;
+        wrap.style.top = `${p.y}%`;
+        wrap.style.transform = 'translate(-50%, -50%)';
+        wrap.dataset.pointName = p.name;
+        const dotCls = typeColor[p.type] || 'border-slate-400 bg-slate-400';
+        wrap.innerHTML = `
+          <div class="flex flex-col items-center">
+            <div class="w-3 h-3 rounded-full ${dotCls.split(' ')[1]} border-2 ${dotCls.split(' ')[0]} shadow-md"></div>
+            <div class="mt-0.5 px-1 py-0.5 rounded bg-white/95 border border-slate-200 text-[8px] text-slate-800 whitespace-nowrap max-w-[120px] truncate">${p.name}</div>
+          </div>`;
+        wrap.addEventListener('click', (e) => {
+          e.stopPropagation();
+          if (boxMode || boxDrawing) return;
+          showCard(p);
+        });
+        layer.appendChild(wrap);
+        markerEls.push({ el: wrap, data: p });
+      });
+    }
+
+    function clampPan() {
+      const max = 180;
+      panX = Math.max(-max, Math.min(max, panX));
+      panY = Math.max(-max, Math.min(max, panY));
+    }
+
+    function onWheel(e) {
+      if (boxMode) return;
+      e.preventDefault();
+      const r = mapViewport.getBoundingClientRect();
+      const mx = e.clientX - r.left - r.width / 2;
+      const my = e.clientY - r.top - r.height / 2;
+      const prevZoom = zoom;
+      const delta = e.deltaY > 0 ? -0.08 : 0.08;
+      zoom = Math.min(2.2, Math.max(0.65, zoom + delta));
+      const rz = zoom / prevZoom;
+      panX -= mx * (1 - rz) * 0.35;
+      panY -= my * (1 - rz) * 0.35;
+      clampPan();
+      applyMapTransform();
+    }
+
+    function getVpRect() {
+      return mapViewport.getBoundingClientRect();
+    }
+
+    function clientToVp(clientX, clientY) {
+      const r = getVpRect();
+      return { x: clientX - r.left, y: clientY - r.top };
+    }
+
+    function updateBoxRect(x1, y1, x2, y2) {
+      const left = Math.min(x1, x2);
+      const top = Math.min(y1, y2);
+      const w = Math.abs(x2 - x1);
+      const h = Math.abs(y2 - y1);
+      rectEl.style.left = `${left}px`;
+      rectEl.style.top = `${top}px`;
+      rectEl.style.width = `${w}px`;
+      rectEl.style.height = `${h}px`;
+    }
+
+    function intersects(a, b) {
+      return !(a.right < b.left || a.left > b.right || a.bottom < b.top || a.top > b.bottom);
+    }
+
+    function countSelectedInBox() {
+      const r = rectEl.getBoundingClientRect();
+      const box = { left: r.left, right: r.right, top: r.top, bottom: r.bottom };
+      let count = 0;
+      markerEls.forEach(({ el }) => {
+        const br = el.getBoundingClientRect();
+        const m = { left: br.left, right: br.right, top: br.top, bottom: br.bottom };
+        if (intersects(box, m)) count += 1;
+      });
+      return count;
+    }
+
+    /* 拖拽地图 */
+    function startPan(ev) {
+      if (boxMode) return;
+      panning = true;
+      card.classList.add('hidden');
+      const p = ev.touches ? ev.touches[0] : ev;
+      panStart = { x: p.clientX, y: p.clientY, px: panX, py: panY };
+    }
+    function movePan(ev) {
+      if (!panning) return;
+      const p = ev.touches ? ev.touches[0] : ev;
+      panX = panStart.px + (p.clientX - panStart.x);
+      panY = panStart.py + (p.clientY - panStart.y);
+      clampPan();
+      applyMapTransform();
+    }
+    function endPan() {
+      panning = false;
+    }
+
+    panHit.addEventListener('mousedown', startPan);
+    window.addEventListener('mousemove', movePan);
+    window.addEventListener('mouseup', endPan);
+    panHit.addEventListener('touchstart', startPan, { passive: false });
+    window.addEventListener('touchmove', movePan, { passive: false });
+    window.addEventListener('touchend', endPan);
+
+    mapViewport.addEventListener('wheel', onWheel, { passive: false });
+
+    document.getElementById('zoom-in').addEventListener('click', () => {
+      zoom = Math.min(2.2, zoom + 0.12);
+      applyMapTransform();
+    });
+    document.getElementById('zoom-out').addEventListener('click', () => {
+      zoom = Math.max(0.65, zoom - 0.12);
+      applyMapTransform();
+    });
+
+    /* 框选 */
+    document.getElementById('btn-box-select').addEventListener('click', () => {
+      boxMode = !boxMode;
+      const btn = document.getElementById('btn-box-select');
+      if (boxMode) {
+        btn.classList.add('bg-blue-600', 'text-white');
+        btn.classList.remove('bg-slate-100', 'text-slate-700');
+        boxHint.classList.remove('hidden');
+        boxHint.textContent = '在地图上拖拽框选企业';
+        panHit.style.pointerEvents = 'none';
+      } else {
+        btn.classList.remove('bg-blue-600', 'text-white');
+        btn.classList.add('bg-slate-100', 'text-slate-700');
+        rectEl.classList.add('hidden');
+        boxHint.classList.add('hidden');
+        panHit.style.pointerEvents = '';
+      }
+    });
+
+    function excludeBoxInteraction(el) {
+      return el.closest('#filter-panel') || el.closest('#enterprise-card') || el.closest('#map-zoom-controls')
+        || el.closest('#map-layer-controls');
+    }
+
+    mapViewport.addEventListener('mousedown', (e) => {
+      if (!boxMode) return;
+      if (!mapViewport.contains(e.target) || excludeBoxInteraction(e.target) || e.target.closest('.marker')) return;
+      boxDrawing = true;
+      const o = clientToVp(e.clientX, e.clientY);
+      boxStart = o;
+      rectEl.classList.remove('hidden');
+      updateBoxRect(o.x, o.y, o.x, o.y);
+    });
+    mapViewport.addEventListener('mousemove', (e) => {
+      if (!boxDrawing) return;
+      const o = clientToVp(e.clientX, e.clientY);
+      updateBoxRect(boxStart.x, boxStart.y, o.x, o.y);
+      const n = countSelectedInBox();
+      boxHint.textContent = `已圈选 ${n} 家企业`;
+    });
+    window.addEventListener('mouseup', () => {
+      if (!boxDrawing) return;
+      boxDrawing = false;
+      const n = countSelectedInBox();
+      if (n > 0) {
+        boxHint.textContent = `已圈选 ${n} 家企业 · 可进行批量操作`;
+      }
+    });
+
+    mapViewport.addEventListener('touchstart', (e) => {
+      if (!boxMode) return;
+      if (excludeBoxInteraction(e.target) || e.target.closest('.marker')) return;
+      if (e.touches.length !== 1) return;
+      const t = e.touches[0];
+      boxDrawing = true;
+      const o = clientToVp(t.clientX, t.clientY);
+      boxStart = o;
+      rectEl.classList.remove('hidden');
+      updateBoxRect(o.x, o.y, o.x, o.y);
+    }, { passive: true });
+    mapViewport.addEventListener('touchmove', (e) => {
+      if (!boxDrawing || !boxMode) return;
+      const t = e.touches[0];
+      const o = clientToVp(t.clientX, t.clientY);
+      updateBoxRect(boxStart.x, boxStart.y, o.x, o.y);
+      boxHint.textContent = `已圈选 ${countSelectedInBox()} 家企业`;
+    }, { passive: true });
+    mapViewport.addEventListener('touchend', () => {
+      if (!boxMode || !boxDrawing) return;
+      boxDrawing = false;
+      boxHint.textContent = `已圈选 ${countSelectedInBox()} 家企业 · 可进行批量操作`;
+    });
+
+    mapViewport.addEventListener('click', (e) => {
+      if (e.target.closest('.marker')) return;
+      if (boxMode || boxDrawing) return;
+      card.classList.add('hidden');
+    });
+
+    searchInput.addEventListener('input', renderPoints);
+
+    document.getElementById('btn-note').addEventListener('click', () => alert('已批量添加便签（示意）'));
+    document.getElementById('btn-track').addEventListener('click', () => alert('已加入跟踪客户清单（示意）'));
+    document.getElementById('btn-create-task').addEventListener('click', () => {
+      window.location.href = './marketing-activity-management.html';
+    });
+    document.getElementById('save-filter').addEventListener('click', () => alert('筛选方案已保存（示意）'));
+
+    document.querySelectorAll('.map-layer-btn').forEach((b) => {
+      b.addEventListener('click', () => {
+        document.querySelectorAll('.map-layer-btn').forEach((x) => {
+          x.classList.remove('bg-white', 'shadow-sm');
+          x.classList.add('bg-white/70');
+        });
+        b.classList.add('bg-white', 'shadow-sm');
+        b.classList.remove('bg-white/70');
+      });
+    });
+
+    applyMapTransform();
+    renderTagFilters();
+    renderPoints();
+  </script>
+</body>
+</html>

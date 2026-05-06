@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>客户综合视图</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
+  <link rel="stylesheet" href="./styles.css" />
+</head>
+<body class="bg-[#e8ecf3] min-h-screen flex items-center justify-center p-6">
+  <div class="phone-shell">
+    <div class="notch"></div>
+    <div class="status-bar bg-white/95"><span>16:22</span><div class="flex gap-1"><i class="fa-solid fa-signal"></i><span>5G</span><i class="fa-solid fa-battery-full"></i></div></div>
+    <div class="safe-content px-4 pt-4 pb-4">
+      <div class="flex items-center justify-between">
+        <h1 class="page-title">客户综合视图</h1>
+        <a href="./customer-center.html" class="text-sm text-blue-600">返回</a>
+      </div>
+
+      <div class="mt-3 relative">
+        <input id="keyword" class="w-full rounded-xl border border-slate-200 p-3 text-sm" placeholder="搜索客户名称/客户号/机构关键词" />
+        <i class="fa-solid fa-magnifying-glass absolute right-3 top-3.5 text-slate-400"></i>
+      </div>
+
+      <div class="mt-3 bg-white rounded-xl p-3 shadow-sm">
+        <div class="flex items-center justify-between text-xs">
+          <label class="inline-flex items-center gap-2 text-slate-600 cursor-pointer select-none">
+            <input id="select-all" type="checkbox" class="h-3.5 w-3.5 rounded border-slate-300 text-blue-600 focus:ring-blue-500" />
+            <span>全选</span>
+          </label>
+          <button id="batch-note" class="px-2 py-1 rounded-md bg-blue-50 text-blue-600">新增标签</button>
+        </div>
+      </div>
+
+      <div id="result-list" class="mt-3 space-y-3 text-sm"></div>
+      <div id="empty-state" class="hidden mt-3 bg-white rounded-xl p-4 text-center text-sm text-slate-500">未找到相关客户，请尝试其他关键字</div>
+      <button id="load-more" class="mt-3 w-full py-3 rounded-xl bg-white border border-slate-200 text-sm text-slate-700">加载更多</button>
+    </div>
+    <div class="tab-bar">
+      <a class="tab-item" href="./workbench.html"><i class="fa-solid fa-table-columns text-lg"></i><div>工作台</div></a>
+      <a class="tab-item active" href="./customer-center.html"><i class="fa-regular fa-user text-lg"></i><div>客户中心</div></a>
+      <a class="tab-item" href="./marketing-center.html"><i class="fa-solid fa-bullhorn text-lg"></i><div>营销中心</div></a>
+      <a class="tab-item" href="./process-center.html"><i class="fa-solid fa-diagram-project text-lg"></i><div>流程中心</div></a>
+      <a class="tab-item" href="./management-center.html"><i class="fa-solid fa-gear text-lg"></i><div>管理中心</div></a>
+      <a class="tab-item" href="./parameter-center.html"><i class="fa-solid fa-sliders text-lg"></i><div>参数中心</div></a>
+    </div>
+  </div>
+  <script>
+    const data = [
+      { id: 'C001', name: '华兴科技集团', type: '我的管户', bankType: '行内', org: '深圳分行', industry: '电子信息', scale: '大型', managerOwned: true },
+      { id: 'C002', name: '海拓物流有限公司', type: '行内非我管户', bankType: '行内', org: '广州分行', industry: '物流运输', scale: '中型', managerOwned: false },
+      { id: 'C003', name: '星云制造股份', type: '我的管户', bankType: '行内', org: '佛山分行', industry: '高端制造', scale: '大型', managerOwned: true },
+      { id: 'C004', name: '华达连锁商贸', type: '行外客户', bankType: '行外', org: '外部客户', industry: '商贸零售', scale: '中型', managerOwned: false },
+      { id: 'C005', name: '深蓝新能源科技', type: '行外客户', bankType: '行外', org: '外部客户', industry: '新能源', scale: '小型', managerOwned: false }
+    ];
+    const pageSize = 20;
+    let shown = pageSize;
+
+    const list = document.getElementById('result-list');
+    const emptyState = document.getElementById('empty-state');
+    const keywordInput = document.getElementById('keyword');
+    const loadMore = document.getElementById('load-more');
+    const selectAll = document.getElementById('select-all');
+
+    function tagClass(type) {
+      if (type === '我的管户') return 'bg-blue-100 text-blue-700';
+      if (type === '行内非我管户') return 'bg-amber-100 text-amber-700';
+      return 'bg-slate-100 text-slate-700';
+    }
+
+    function highlight(text, keyword) {
+      if (!keyword) return text;
+      return text.replace(new RegExp(keyword, 'gi'), (m) => `<span class="bg-yellow-200 px-0.5 rounded">${m}</span>`);
+    }
+
+    function render() {
+      const keyword = keywordInput.value.trim();
+      const filtered = data.filter((d) => [d.name, d.id, d.org].some((f) => f.toLowerCase().includes(keyword.toLowerCase())))
+        .sort((a, b) => (a.bankType === '行内' && b.bankType === '行外' ? -1 : a.bankType === b.bankType ? 0 : 1));
+
+      const shownList = filtered.slice(0, shown);
+      list.innerHTML = shownList.map((d) => `
+        <div class="bg-white rounded-xl p-3 shadow-sm">
+          <div class="flex items-start gap-2">
+            <input type="checkbox" class="mt-1 customer-check" data-name="${d.name}" />
+            <div class="flex-1 min-w-0">
+              <div class="flex items-center gap-2">
+                <span class="text-[10px] px-2 py-0.5 rounded-full ${tagClass(d.type)}">${d.type}</span>
+                <a href="./customer-360.html?customer=${encodeURIComponent(d.name)}&type=${d.managerOwned ? 'managed' : (d.bankType === '行内' ? 'internal_other' : 'external')}" class="font-semibold text-slate-800 truncate">${highlight(d.name, keyword)}</a>
+              </div>
+              <p class="text-xs text-slate-500 mt-1">客户号：${d.id} · 机构：${d.org}</p>
+              <p class="text-xs text-slate-500 mt-1">行业：${d.industry} · 规模：${d.scale}</p>
+            </div>
+          </div>
+        </div>
+      `).join('');
+
+      emptyState.classList.toggle('hidden', filtered.length > 0);
+      loadMore.classList.toggle('hidden', shown >= filtered.length || filtered.length <= pageSize);
+      selectAll.checked = false;
+    }
+
+    keywordInput.addEventListener('input', () => {
+      shown = pageSize;
+      render();
+    });
+
+    loadMore.addEventListener('click', () => {
+      shown += pageSize;
+      render();
+    });
+
+    list.addEventListener('change', (e) => {
+      if (!e.target.classList.contains('customer-check')) return;
+      const checks = Array.from(document.querySelectorAll('.customer-check'));
+      selectAll.checked = checks.length > 0 && checks.every((el) => el.checked);
+    });
+
+    selectAll.addEventListener('change', () => {
+      document.querySelectorAll('.customer-check').forEach((el) => {
+        el.checked = selectAll.checked;
+      });
+    });
+
+    document.getElementById('batch-note').addEventListener('click', () => {
+      const checked = Array.from(document.querySelectorAll('.customer-check:checked')).map((el) => el.dataset.name);
+      alert(checked.length ? `已为 ${checked.join('、')} 新增便签` : '请先勾选客户');
+    });
+
+    render();
+  </script>
+</body>
+</html>

@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>新增日程</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
+  <link rel="stylesheet" href="./styles.css" />
+</head>
+<body class="bg-[#e8ecf3] min-h-screen flex items-center justify-center p-6">
+  <div class="phone-shell">
+    <div class="notch"></div>
+    <div class="status-bar bg-white/95"><span>16:22</span><div class="flex gap-1"><i class="fa-solid fa-signal"></i><span>5G</span><i class="fa-solid fa-battery-full"></i></div></div>
+    <div class="safe-content px-4 pt-4 pb-4 overflow-y-auto">
+      <div class="flex items-center justify-between">
+        <h1 class="page-title">新增日程</h1>
+        <a href="./schedule-management.html" class="text-sm text-blue-600">返回</a>
+      </div>
+      <div class="mt-4 bg-white rounded-xl border border-slate-100 p-3 space-y-3 text-sm">
+        <input class="w-full rounded-lg border border-slate-200 px-3 py-2" placeholder="日程标题" />
+        <select class="w-full rounded-lg border border-slate-200 px-3 py-2">
+          <option>事务分类</option><option>客户拜访</option><option>内部会议</option><option>培训学习</option><option>行政事务</option>
+        </select>
+        <div class="grid grid-cols-2 gap-2">
+          <input class="rounded-lg border border-slate-200 px-3 py-2" placeholder="日期" />
+          <input class="rounded-lg border border-slate-200 px-3 py-2" placeholder="时间" />
+        </div>
+        <input class="w-full rounded-lg border border-slate-200 px-3 py-2" placeholder="关联客户（可选）" />
+        <textarea class="w-full rounded-lg border border-slate-200 px-3 py-2 h-24" placeholder="日程说明"></textarea>
+        <button class="w-full py-2.5 rounded-lg border border-dashed border-slate-300 text-slate-500">+ 上传附件</button>
+      </div>
+      <button class="mt-4 w-full py-3 rounded-xl bg-blue-600 text-white text-sm font-medium">保存日程</button>
+    </div>
+    <div class="tab-bar">
+      <a class="tab-item active" href="./workbench.html"><i class="fa-solid fa-table-columns text-lg"></i><div>工作台</div></a>
+      <a class="tab-item" href="./customer-center.html"><i class="fa-regular fa-user text-lg"></i><div>客户中心</div></a>
+      <a class="tab-item" href="./marketing-center.html"><i class="fa-solid fa-bullhorn text-lg"></i><div>营销中心</div></a>
+      <a class="tab-item" href="./process-center.html"><i class="fa-solid fa-diagram-project text-lg"></i><div>流程中心</div></a>
+      <a class="tab-item" href="./management-center.html"><i class="fa-solid fa-gear text-lg"></i><div>管理中心</div></a>
+      <a class="tab-item" href="./parameter-center.html"><i class="fa-solid fa-sliders text-lg"></i><div>参数中心</div></a>
+    </div>
+  </div>
+</body>
+</html>

@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>客户拜访</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
+  <link rel="stylesheet" href="./styles.css" />
+</head>
+<body class="bg-[#e8ecf3] min-h-screen flex items-center justify-center p-6">
+  <div class="phone-shell">
+    <div class="notch"></div>
+    <div class="status-bar bg-white/95"><span>13:53</span><div class="flex gap-1"><i class="fa-solid fa-signal"></i><span>5G</span><i class="fa-solid fa-battery-full"></i></div></div>
+    <div class="safe-content overflow-hidden relative flex flex-col">
+      <div class="px-4 pt-3 pb-2 bg-white border-b border-slate-100">
+        <div class="flex items-center justify-between">
+          <a href="./workbench.html" class="text-slate-700"><i class="fa-solid fa-angle-left"></i></a>
+          <h1 class="text-[18px] font-semibold text-slate-800">客户拜访</h1>
+          <button id="header-action-btn" type="button" class="text-slate-500"><i class="fa-solid fa-magnifying-glass"></i></button>
+        </div>
+      </div>
+
+      <div id="visit-content" class="flex-1 min-h-0 overflow-y-auto bg-[#f4f5f7] px-3 pt-3 pb-[74px]"></div>
+
+      <div class="absolute left-0 right-0 bottom-0 h-[62px] border-t border-slate-200 bg-white flex items-center justify-around text-[11px]">
+        <button type="button" data-tab="apply" class="visit-tab-btn text-blue-500 flex flex-col items-center gap-1">
+          <i class="fa-solid fa-pen-to-square text-lg"></i><span>我申请的</span>
+        </button>
+        <button type="button" data-tab="mine" class="visit-tab-btn text-slate-400 flex flex-col items-center gap-1">
+          <i class="fa-regular fa-right-to-bracket text-lg"></i><span>我拜访的</span>
+        </button>
+        <button type="button" data-tab="view" class="visit-tab-btn text-slate-400 flex flex-col items-center gap-1">
+          <i class="fa-regular fa-rectangle-list text-lg"></i><span>我查看的</span>
+        </button>
+      </div>
+    </div>
+  </div>
+  <script>
+    const myAppliedVisits = [
+      {
+        id: 'apply_1',
+        customer: '上海市社保基金',
+        customerType: '行内客户',
+        date: '2026-04-29',
+        time: '08:30-10:00',
+        reason: '开户尽调,贷前尽调,收送材料,贷后检查,存量客户营销,新户营销,客户关系维护,其他',
+        location: '上海市上海银行(数据处理中⼼)',
+      },
+    ];
+
+    const myVisitsUnsigned = [
+      { id: 'mine_1', customer: '上海市社保基金', date: '2026-04-29', time: '08:30-10:00', status: '未签到' },
+    ];
+    const myVisitsSigned = [
+      { id: 'mine_2', customer: '上海科创智慧集团', date: '2026-04-28', time: '09:00-10:30', status: '已签到' },
+    ];
+
+    const viewStatsList = [
+      { id: 'view_1', customer: '峨眉电影集团有限公司', total: 28 },
+      { id: 'view_2', customer: '上海桑阳电子科技有限公司', total: 22 },
+      { id: 'view_3', customer: '苏州市中小微企业融资担保有限公司', total: 21 },
+      { id: 'view_4', customer: '四川汉恒数智科技有限公司', total: 15 },
+      { id: 'view_5', customer: '上海诺狄生物科技有限公司', total: 12 },
+    ];
+
+    let activeTab = 'apply';
+    let mineStatus = 'unsigned';
+    const contentEl = document.getElementById('visit-content');
+    const headerActionBtn = document.getElementById('header-action-btn');
+
+    function renderApplyTab() {
+      contentEl.innerHTML = `
+        ${myAppliedVisits.map((v) => `
+          <div class="bg-white rounded-xl border border-slate-100 p-3 mb-3 shadow-sm">
+            <div class="flex items-center gap-2">
+              <h3 class="text-[19px] font-semibold text-slate-900">${v.customer}</h3>
+              <span class="px-2 py-0.5 text-[11px] rounded border border-slate-300 text-slate-500">${v.customerType}</span>
+            </div>
+            <div class="mt-2 border-t border-slate-100 pt-2 text-[14px]">
+              <div class="grid grid-cols-[78px_1fr] py-1"><span class="text-slate-500">拜访日期</span><span class="text-right text-slate-800">${v.date}</span></div>
+              <div class="grid grid-cols-[78px_1fr] py-1"><span class="text-slate-500">拜访时间</span><span class="text-right text-slate-800">${v.time}</span></div>
+              <div class="grid grid-cols-[78px_1fr] py-1"><span class="text-slate-500">拜访事由</span><span class="text-right text-slate-800 leading-snug">${v.reason}</span></div>
+              <div class="grid grid-cols-[78px_1fr] py-1"><span class="text-slate-500">访谈地点</span><span class="text-right text-slate-800">${v.location}</span></div>
+            </div>
+            <div class="mt-2 flex gap-2 justify-end text-[14px]">
+              <button type="button" class="px-4 py-1.5 rounded-full border border-slate-300 text-slate-500">取消申请</button>
+              <a href="./customer-visit-apply.html?id=${v.id}" class="px-4 py-1.5 rounded-full border border-slate-300 text-slate-600">修改申请</a>
+              <a href="./customer-visit-checkin.html?id=${v.id}" class="px-4 py-1.5 rounded-full border border-blue-400 text-blue-500">签到打卡</a>
+            </div>
+          </div>
+        `).join('')}
+        <p class="text-center text-slate-400 text-base py-2">没有更多了</p>
+      `;
+      contentEl.insertAdjacentHTML('beforeend', `
+        <div class="sticky bottom-2 bg-transparent pt-2 pb-1">
+          <a href="./customer-visit-apply.html" class="mx-auto w-[70%] h-12 rounded-full bg-white border border-slate-100 shadow-sm flex items-center justify-center text-blue-500 text-base">
+            <i class="fa-solid fa-plus mr-2"></i><span>发起申请</span>
+          </a>
+        </div>
+      `);
+    }
+
+    function renderMineTab() {
+      const list = mineStatus === 'unsigned' ? myVisitsUnsigned : myVisitsSigned;
+      contentEl.innerHTML = `
+        <div class="bg-white rounded-t-xl border border-slate-100 border-b-0">
+          <div class="flex">
+            <button type="button" data-mine-status="unsigned" class="mine-status-btn flex-1 py-2.5 text-[16px] ${mineStatus === 'unsigned' ? 'text-blue-500 border-b-[3px] border-blue-500' : 'text-slate-500 border-b-[3px] border-transparent'}">未签到</button>
+            <button type="button" data-mine-status="signed" class="mine-status-btn flex-1 py-2.5 text-[16px] ${mineStatus === 'signed' ? 'text-blue-500 border-b-[3px] border-blue-500' : 'text-slate-500 border-b-[3px] border-transparent'}">已签到</button>
+          </div>
+        </div>
+        <div class="bg-[#f4f5f7] text-[15px] text-slate-700 py-2 px-1">2026-04-29</div>
+        ${list.map((v) => `
+          <a href="./customer-visit-checkin.html?id=${v.id}" class="block bg-white rounded-xl border border-slate-100 p-3 mb-2 shadow-sm">
+            <div class="flex items-center justify-between">
+              <h3 class="text-[19px] font-semibold text-slate-900">${v.customer}</h3>
+              <span class="text-[15px] ${mineStatus === 'unsigned' ? 'text-amber-400' : 'text-emerald-500'}">${v.status}</span>
+            </div>
+            <div class="mt-2 border-t border-slate-100 pt-2 text-[14px]">
+              <div class="grid grid-cols-[78px_1fr] py-1"><span class="text-slate-500">拜访日期</span><span class="text-right text-slate-800">${v.date}</span></div>
+              <div class="grid grid-cols-[78px_1fr] py-1"><span class="text-slate-500">拜访时间</span><span class="text-right text-slate-800">${v.time}</span></div>
+            </div>
+          </a>
+        `).join('')}
+        <p class="text-center text-slate-400 text-base py-2">没有更多了</p>
+      `;
+      document.querySelectorAll('.mine-status-btn').forEach((btn) => {
+        btn.addEventListener('click', () => {
+          mineStatus = btn.dataset.mineStatus;
+          renderMineTab();
+        });
+      });
+    }
+
+    function renderViewTab() {
+      contentEl.innerHTML = `
+        <div class="flex items-center justify-between text-[15px] text-slate-700 px-1 pb-2">
+          <span>2026-03-29–2026-04-29</span>
+          <button type="button" class="text-slate-500"><i class="fa-solid fa-filter"></i></button>
+        </div>
+        ${viewStatsList.map((v) => `
+          <div class="bg-white rounded-xl border border-slate-100 p-3 mb-3 shadow-sm">
+            <h3 class="text-[18px] font-semibold text-slate-900">${v.customer}</h3>
+            <div class="mt-2 border-t border-slate-100 pt-2 flex items-center justify-between">
+              <span class="text-[16px] text-slate-500">拜访总次数：${v.total}</span>
+              <a href="./customer-visit-view-detail.html?id=${v.id}" class="px-3 py-1 rounded-full bg-sky-50 text-sky-500 text-[16px]">拜访明细</a>
+            </div>
+          </div>
+        `).join('')}
+      `;
+    }
+
+    function renderTab() {
+      document.querySelectorAll('.visit-tab-btn').forEach((btn) => {
+        const on = btn.dataset.tab === activeTab;
+        btn.classList.toggle('text-blue-500', on);
+        btn.classList.toggle('text-slate-400', !on);
+        const icon = btn.querySelector('i');
+        if (btn.dataset.tab === 'apply') icon.className = on ? 'fa-solid fa-pen-to-square text-lg' : 'fa-regular fa-pen-to-square text-lg';
+        if (btn.dataset.tab === 'mine') icon.className = on ? 'fa-solid fa-right-to-bracket text-lg' : 'fa-regular fa-right-to-bracket text-lg';
+        if (btn.dataset.tab === 'view') icon.className = on ? 'fa-solid fa-rectangle-list text-lg' : 'fa-regular fa-rectangle-list text-lg';
+      });
+
+      headerActionBtn.innerHTML = activeTab === 'view'
+        ? '<i class="fa-solid fa-filter"></i>'
+        : '<i class="fa-solid fa-magnifying-glass"></i>';
+
+      if (activeTab === 'apply') renderApplyTab();
+      else if (activeTab === 'mine') renderMineTab();
+      else renderViewTab();
+    }
+
+    document.querySelectorAll('.visit-tab-btn').forEach((btn) => {
+      btn.addEventListener('click', () => {
+        activeTab = btn.dataset.tab;
+        renderTab();
+      });
+    });
+
+    const qs = new URLSearchParams(location.search);
+    const t = qs.get('tab');
+    if (t === 'apply' || t === 'mine' || t === 'view') activeTab = t;
+    const mine = qs.get('mineStatus');
+    if (mine === 'unsigned' || mine === 'signed') mineStatus = mine;
+    renderTab();
+  </script>
+</body>
+</html>

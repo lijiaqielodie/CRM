@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>业务提醒</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
+  <link rel="stylesheet" href="./styles.css" />
+</head>
+<body class="bg-[#e8ecf3] min-h-screen flex items-center justify-center p-6">
+  <div class="phone-shell">
+    <div class="notch"></div>
+    <div class="status-bar bg-white/95"><span>16:22</span><div class="flex gap-1"><i class="fa-solid fa-signal"></i><span>5G</span><i class="fa-solid fa-battery-full"></i></div></div>
+    <div class="safe-content px-4 pt-4">
+      <div class="flex items-center justify-between">
+        <h1 class="page-title">业务提醒</h1>
+        <a href="./workbench.html" class="text-sm text-blue-600">返回</a>
+      </div>
+      <div class="mt-3 bg-white rounded-2xl p-4 shadow-sm">
+        <div class="flex items-center justify-between mb-3">
+          <h3 class="font-semibold text-slate-800">提醒列表</h3>
+          <button id="mark-all-read-page" class="px-2 py-1 rounded-md bg-slate-100 text-slate-600 text-xs">全部标为已读</button>
+        </div>
+        <div id="reminder-list-page" class="space-y-2 text-sm">
+          <a href="./reminder-detail.html?id=R20260424001" data-read="false" class="reminder-item w-full text-left flex items-start gap-2 p-2 rounded-lg bg-blue-50">
+            <span class="reminder-dot w-2 h-2 mt-2 rounded-full bg-blue-600"></span>
+            <div class="flex-1 min-w-0">
+              <p class="font-medium text-slate-800 truncate">风险提示：星云制造授信临期提醒</p>
+              <p class="text-xs text-slate-500 truncate">关联客户：星云制造股份 · 提前3天提醒</p>
+            </div>
+            <span class="text-xs text-slate-400">10:30</span>
+          </a>
+          <a href="./reminder-detail.html?id=R20260424002" data-read="false" class="reminder-item w-full text-left flex items-start gap-2 p-2 rounded-lg bg-blue-50">
+            <span class="reminder-dot w-2 h-2 mt-2 rounded-full bg-blue-600"></span>
+            <div class="flex-1 min-w-0">
+              <p class="font-medium text-slate-800 truncate">业务管理：电子函证处理时效提醒</p>
+              <p class="text-xs text-slate-500 truncate">关联客户：华兴科技集团</p>
+            </div>
+            <span class="text-xs text-slate-400">09:40</span>
+          </a>
+          <a href="./reminder-detail.html?id=R20260423001" data-read="false" class="reminder-item w-full text-left flex items-start gap-2 p-2 rounded-lg bg-blue-50">
+            <span class="reminder-dot w-2 h-2 mt-2 rounded-full bg-blue-600"></span>
+            <div class="flex-1 min-w-0">
+              <p class="font-medium text-slate-800 truncate">营销商机：现金管理方案客户点击率上升</p>
+              <p class="text-xs text-slate-500 truncate">关联客户：华达连锁商贸</p>
+            </div>
+            <span class="text-xs text-slate-400">08:55</span>
+          </a>
+          <a href="./reminder-detail.html?id=R20260422001" data-read="true" class="reminder-item w-full text-left flex items-start gap-2 p-2 rounded-lg bg-slate-50">
+            <span class="reminder-dot w-2 h-2 mt-2 rounded-full bg-transparent"></span>
+            <div class="flex-1 min-w-0">
+              <p class="font-medium text-slate-700 truncate">经营动态：海拓物流近30日结算额上升12%</p>
+              <p class="text-xs text-slate-500 truncate">关联客户：海拓物流有限公司</p>
+            </div>
+            <span class="text-xs text-slate-400">昨天</span>
+          </a>
+          <a href="./reminder-detail.html?id=R20260421001" data-read="true" class="reminder-item w-full text-left flex items-start gap-2 p-2 rounded-lg bg-slate-50">
+            <span class="reminder-dot w-2 h-2 mt-2 rounded-full bg-transparent"></span>
+            <div class="flex-1 min-w-0">
+              <p class="font-medium text-slate-700 truncate">经营动态：重点客户拜访纪要已归档</p>
+              <p class="text-xs text-slate-500 truncate">关联客户：深蓝制造有限公司</p>
+            </div>
+            <span class="text-xs text-slate-400">2026.04.23</span>
+          </a>
+        </div>
+      </div>
+    </div>
+    <div class="tab-bar">
+      <a class="tab-item active" href="./workbench.html"><i class="fa-solid fa-table-columns text-lg"></i><div>工作台</div></a>
+      <a class="tab-item" href="./customer-center.html"><i class="fa-regular fa-user text-lg"></i><div>客户中心</div></a>
+      <a class="tab-item" href="./marketing-center.html"><i class="fa-solid fa-bullhorn text-lg"></i><div>营销中心</div></a>
+      <a class="tab-item" href="./process-center.html"><i class="fa-solid fa-diagram-project text-lg"></i><div>流程中心</div></a>
+      <a class="tab-item" href="./management-center.html"><i class="fa-solid fa-gear text-lg"></i><div>管理中心</div></a>
+      <a class="tab-item" href="./parameter-center.html"><i class="fa-solid fa-sliders text-lg"></i><div>参数中心</div></a>
+    </div>
+  </div>
+  <script>
+    const reminderList = document.getElementById('reminder-list-page');
+    const markAllRead = document.getElementById('mark-all-read-page');
+
+    function normalizeReminders() {
+      const items = Array.from(reminderList.querySelectorAll('.reminder-item'));
+      items.sort((a, b) => (a.dataset.read === 'false' && b.dataset.read === 'true' ? -1 : a.dataset.read === b.dataset.read ? 0 : 1));
+      items.forEach((item) => reminderList.appendChild(item));
+      items.forEach((item) => {
+        const isRead = item.dataset.read === 'true';
+        const dot = item.querySelector('.reminder-dot');
+        item.classList.toggle('bg-blue-50', !isRead);
+        item.classList.toggle('bg-slate-50', isRead);
+        dot.classList.toggle('bg-blue-600', !isRead);
+        dot.classList.toggle('bg-transparent', isRead);
+        const title = item.querySelector('p');
+        title.classList.toggle('text-slate-800', !isRead);
+        title.classList.toggle('text-slate-700', isRead);
+      });
+    }
+
+    reminderList.querySelectorAll('.reminder-item').forEach((item) => {
+      item.addEventListener('click', (event) => {
+        event.preventDefault();
+        item.dataset.read = 'true';
+        normalizeReminders();
+        const targetUrl = item.getAttribute('href');
+        setTimeout(() => {
+          window.location.href = targetUrl;
+        }, 120);
+      });
+    });
+
+    markAllRead.addEventListener('click', () => {
+      reminderList.querySelectorAll('.reminder-item').forEach((item) => {
+        item.dataset.read = 'true';
+      });
+      normalizeReminders();
+    });
+
+    normalizeReminders();
+  </script>
+</body>
+</html>

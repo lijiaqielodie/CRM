@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>访前一页纸</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
+  <link rel="stylesheet" href="./styles.css" />
+</head>
+<body class="bg-[#e8ecf3] min-h-screen flex items-center justify-center p-6">
+  <div class="phone-shell">
+    <div class="notch"></div>
+    <div class="status-bar bg-white/95"><span>16:22</span><div class="flex gap-1"><i class="fa-solid fa-signal"></i><span>5G</span><i class="fa-solid fa-battery-full"></i></div></div>
+
+    <!-- 面板一：检索（对齐访前一页纸1 交互结构：企业名称 + 行业筛选） -->
+    <div id="panel-search" class="safe-content px-4 pt-4 pb-24 overflow-y-auto">
+      <div class="flex items-center justify-between">
+        <button type="button" id="btn-back-assistant" class="text-slate-600"><i class="fa-solid fa-angle-left text-xl"></i></button>
+        <h1 class="text-[17px] font-bold text-slate-900">访前一页纸</h1>
+        <span class="w-6"></span>
+      </div>
+
+      <div class="mt-4 bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden">
+        <div class="bg-gradient-to-r from-blue-600 to-indigo-600 px-4 py-3">
+          <p class="text-white text-sm font-semibold">企业检索</p>
+          <p class="text-blue-100 text-[11px] mt-0.5">支持企业名称模糊匹配 · 可按行业收窄范围</p>
+        </div>
+        <div class="p-4 space-y-4">
+          <div>
+            <label class="block text-[11px] font-medium text-slate-500 mb-1.5">企业名称</label>
+            <div class="relative">
+              <input id="corp-search" type="search" autocomplete="off" class="w-full rounded-xl border border-slate-200 bg-slate-50 py-3 pl-10 pr-3 text-sm outline-none focus:border-blue-400 focus:bg-white" placeholder="请输入企业名称关键字" />
+              <i class="fa-solid fa-magnifying-glass absolute left-3 top-3.5 text-slate-400"></i>
+            </div>
+          </div>
+          <div>
+            <label class="block text-[11px] font-medium text-slate-500 mb-1.5">所属行业</label>
+            <select id="industry-filter" class="w-full rounded-xl border border-slate-200 bg-white py-3 px-3 text-sm text-slate-700 outline-none focus:border-blue-400">
+              <option value="">全部行业</option>
+              <option value="电子信息">电子信息制造业</option>
+              <option value="物流">交通运输 · 物流</option>
+              <option value="商贸">批发零售 · 商贸</option>
+              <option value="新能源">电力 · 新能源</option>
+              <option value="高端制造">高端装备制造</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <div id="hint-empty" class="hidden mt-6 text-center text-[13px] text-slate-400 py-10 bg-white rounded-2xl border border-dashed border-slate-200">
+        <i class="fa-regular fa-folder-open text-2xl mb-2 opacity-40"></i>
+        <p>未检索到符合条件的企业</p>
+        <p class="text-[11px] mt-1">请调整名称关键字或行业筛选</p>
+      </div>
+
+      <ul id="corp-list" class="mt-3 space-y-2"></ul>
+
+      <div class="fixed left-1/2 bottom-[76px] -translate-x-1/2 w-[calc(393px-32px)] max-w-[calc(100vw-48px)] z-20">
+        <button type="button" id="btn-view-report" disabled class="w-full py-3.5 rounded-2xl text-sm font-semibold shadow-lg bg-slate-300 text-white cursor-not-allowed disabled:opacity-90 enabled:bg-blue-600 enabled:cursor-pointer enabled:active:scale-[0.99] transition">
+          查看报告
+        </button>
+      </div>
+    </div>
+
+    <!-- 面板二：报告预览（对齐访前一页纸2：文书排版 + 底部下载） -->
+    <div id="panel-report" class="safe-content px-4 pt-4 pb-28 overflow-y-auto hidden">
+      <div class="flex items-center gap-3 mb-4">
+        <button type="button" id="btn-back-search" class="text-slate-600"><i class="fa-solid fa-angle-left text-xl"></i></button>
+        <div class="flex-1 min-w-0">
+          <p class="text-[11px] text-slate-400">一页纸简报</p>
+          <p id="report-title" class="text-[17px] font-bold text-slate-900 truncate">—</p>
+        </div>
+      </div>
+
+      <article id="report-paper" class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden text-[13px] leading-relaxed text-slate-700">
+        <header class="bg-gradient-to-br from-slate-800 to-slate-900 px-4 py-4 text-white">
+          <p class="text-[10px] opacity-70 tracking-wider">PRE-VISIT BRIEFING</p>
+          <h2 id="report-head-name" class="text-lg font-bold mt-1">—</h2>
+          <p id="report-head-meta" class="text-[11px] mt-2 opacity-85">所属行业 · — · 生成时间 —</p>
+        </header>
+        <div class="divide-y divide-slate-100">
+          <section class="px-4 py-3">
+            <h3 class="text-[12px] font-bold text-blue-700 flex items-center gap-2"><span class="w-1 h-3 bg-blue-600 rounded-full"></span>经营与授信概况</h3>
+            <p class="mt-2 text-slate-600">客户近三年主营业务保持稳定增长；授信额度使用率在合理区间，担保结构以抵押与保证为主。</p>
+          </section>
+          <section class="px-4 py-3">
+            <h3 class="text-[12px] font-bold text-blue-700 flex items-center gap-2"><span class="w-1 h-3 bg-blue-600 rounded-full"></span>账户与结算行为</h3>
+            <ul class="mt-2 space-y-1 text-[12px] text-slate-600 list-disc list-inside">
+              <li>基本户日均余额较上年末上升约 8%</li>
+              <li>贷方大额入账集中度可控</li>
+            </ul>
+          </section>
+          <section class="px-4 py-3">
+            <h3 class="text-[12px] font-bold text-amber-700 flex items-center gap-2"><span class="w-1 h-3 bg-amber-500 rounded-full"></span>风险提示要点</h3>
+            <p class="mt-2 text-slate-600">授信年检窗口临近；建议补充近期财报及实控人征信复核结论。</p>
+          </section>
+          <section class="px-4 py-3 bg-slate-50">
+            <h3 class="text-[12px] font-bold text-emerald-700 flex items-center gap-2"><span class="w-1 h-3 bg-emerald-500 rounded-full"></span>本次拜访建议动作</h3>
+            <p class="mt-2 text-slate-600">聚焦现金流管理与供应链金融续约；约定补充材料时间表。</p>
+          </section>
+        </div>
+      </article>
+
+      <button type="button" id="btn-download-report" class="mt-5 w-full py-3.5 rounded-2xl bg-emerald-600 text-white text-sm font-semibold shadow-md flex items-center justify-center gap-2 active:opacity-95">
+        <i class="fa-solid fa-download"></i> 下载报告文件
+      </button>
+      <p class="text-[10px] text-center text-slate-400 mt-2">原型阶段生成文本文件 · 对接后可替换为 PDF/Word</p>
+    </div>
+
+    <div class="tab-bar">
+      <a class="tab-item" href="./workbench.html"><i class="fa-solid fa-table-columns text-lg"></i><div>工作台</div></a>
+      <a class="tab-item" href="./customer-center.html"><i class="fa-regular fa-user text-lg"></i><div>客户中心</div></a>
+      <a class="tab-item" href="./marketing-center.html"><i class="fa-solid fa-bullhorn text-lg"></i><div>营销中心</div></a>
+      <a class="tab-item" href="./process-center.html"><i class="fa-solid fa-diagram-project text-lg"></i><div>流程中心</div></a>
+      <a class="tab-item" href="./management-center.html"><i class="fa-solid fa-gear text-lg"></i><div>管理中心</div></a>
+      <a class="tab-item" href="./parameter-center.html"><i class="fa-solid fa-sliders text-lg"></i><div>参数中心</div></a>
+    </div>
+  </div>
+
+  <script>
+    const corpus = [
+      { name: '华兴科技集团', industryKey: '电子信息', industryLabel: '电子信息制造业' },
+      { name: '海拓物流有限公司', industryKey: '物流', industryLabel: '交通运输 · 物流' },
+      { name: '星云制造股份', industryKey: '高端制造', industryLabel: '高端装备制造' },
+      { name: '华达连锁商贸', industryKey: '商贸', industryLabel: '批发零售 · 商贸' },
+      { name: '深蓝新能源科技有限公司', industryKey: '新能源', industryLabel: '电力 · 新能源' },
+      { name: '宏泰精密制造股份有限公司', industryKey: '高端制造', industryLabel: '高端装备制造' }
+    ];
+
+    const params = new URLSearchParams(window.location.search);
+    const preset = params.get('q') || '';
+
+    const panelSearch = document.getElementById('panel-search');
+    const panelReport = document.getElementById('panel-report');
+    const searchEl = document.getElementById('corp-search');
+    const industryEl = document.getElementById('industry-filter');
+    const listEl = document.getElementById('corp-list');
+    const hintEmpty = document.getElementById('hint-empty');
+    const btnView = document.getElementById('btn-view-report');
+    const btnDownload = document.getElementById('btn-download-report');
+
+    let selected = null;
+
+    document.getElementById('btn-back-assistant').addEventListener('click', () => { window.location.href = './smart-assistant.html'; });
+
+    function fuzzy(keyword, text) {
+      if (!keyword.trim()) return true;
+      const k = keyword.trim().toLowerCase();
+      const t = text.toLowerCase();
+      if (t.includes(k)) return true;
+      let ki = 0;
+      for (let i = 0; i < t.length && ki < k.length; i += 1) {
+        if (t[i] === k[ki]) ki += 1;
+      }
+      return ki === k.length;
+    }
+
+    function highlight(text, kw) {
+      if (!kw.trim()) return text;
+      const safe = kw.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+      return text.replace(new RegExp(`(${safe})`, 'gi'), '<mark class="bg-yellow-200 rounded px-0.5">$1</mark>');
+    }
+
+    function filteredRows() {
+      const kw = searchEl.value;
+      const ind = industryEl.value;
+      return corpus.filter((row) => {
+        const okName = fuzzy(kw, row.name);
+        const okInd = !ind || row.industryKey === ind;
+        return okName && okInd;
+      });
+    }
+
+    function syncViewBtn() {
+      const disabled = !selected;
+      btnView.disabled = disabled;
+      btnView.classList.toggle('bg-slate-300', disabled);
+      btnView.classList.toggle('cursor-not-allowed', disabled);
+      btnView.classList.toggle('bg-blue-600', !disabled);
+      btnView.classList.toggle('cursor-pointer', !disabled);
+    }
+
+    function renderList() {
+      const rows = filteredRows();
+      const kw = searchEl.value;
+      hintEmpty.classList.toggle('hidden', rows.length > 0);
+      listEl.innerHTML = rows.map((row) => {
+        const active = selected && selected.name === row.name;
+        return `
+        <li>
+          <button type="button" data-json="${encodeURIComponent(JSON.stringify(row))}" class="corp-row w-full text-left rounded-xl border ${active ? 'border-blue-500 ring-2 ring-blue-100 bg-blue-50/80' : 'border-slate-200 bg-white'} p-3 shadow-sm transition active:scale-[0.99]">
+            <div class="flex justify-between gap-2 items-start">
+              <span class="font-semibold text-slate-900">${highlight(row.name, kw)}</span>
+              <span class="text-[10px] px-2 py-0.5 rounded-full bg-slate-100 text-slate-600 whitespace-nowrap">${row.industryLabel}</span>
+            </div>
+            <p class="text-[11px] text-slate-400 mt-1">点击选中该企业生成一页纸</p>
+          </button>
+        </li>`;
+      }).join('');
+
+      document.querySelectorAll('.corp-row').forEach((btn) => {
+        btn.addEventListener('click', () => {
+          selected = JSON.parse(decodeURIComponent(btn.dataset.json));
+          syncViewBtn();
+          renderList();
+        });
+      });
+      syncViewBtn();
+    }
+
+    searchEl.addEventListener('input', renderList);
+    industryEl.addEventListener('change', renderList);
+
+    btnView.addEventListener('click', () => {
+      if (!selected) return;
+      document.getElementById('report-title').textContent = selected.name;
+      document.getElementById('report-head-name').textContent = selected.name;
+      document.getElementById('report-head-meta').textContent = `${selected.industryLabel} · 生成时间 ${new Date().toLocaleString('zh-CN')}`;
+      panelSearch.classList.add('hidden');
+      panelReport.classList.remove('hidden');
+    });
+
+    document.getElementById('btn-back-search').addEventListener('click', () => {
+      panelReport.classList.add('hidden');
+      panelSearch.classList.remove('hidden');
+    });
+
+    btnDownload.addEventListener('click', () => {
+      if (!selected) return;
+      const body = [
+        `访前一页纸简报`,
+        `企业名称：${selected.name}`,
+        `所属行业：${selected.industryLabel}`,
+        `生成时间：${new Date().toLocaleString('zh-CN')}`,
+        '',
+        '【经营与授信概况】',
+        '客户近三年主营业务保持稳定增长……',
+        '',
+        '【风险提示要点】',
+        '授信年检窗口临近……',
+        '',
+        '【拜访建议】',
+        '聚焦现金流管理与供应链金融续约……'
+      ].join('\n');
+      const blob = new Blob([body], { type: 'text/plain;charset=utf-8' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `访前一页纸_${selected.name.replace(/\s/g, '_')}.txt`;
+      a.click();
+      URL.revokeObjectURL(url);
+    });
+
+    if (preset) searchEl.value = preset;
+    renderList();
+    if (preset) {
+      const hit = corpus.find((r) => fuzzy(preset, r.name));
+      if (hit) {
+        selected = hit;
+        syncViewBtn();
+        renderList();
+      }
+    }
+  </script>
+</body>
+</html>

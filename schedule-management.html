@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>日程管理</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
+  <link rel="stylesheet" href="./styles.css" />
+</head>
+<body class="bg-[#e8ecf3] min-h-screen flex items-center justify-center p-6">
+  <div class="phone-shell">
+    <div class="notch"></div>
+    <div class="status-bar bg-white/95"><span>16:22</span><div class="flex gap-1"><i class="fa-solid fa-signal"></i><span>5G</span><i class="fa-solid fa-battery-full"></i></div></div>
+    <div class="safe-content px-4 pt-4 pb-4 overflow-y-auto">
+      <div class="flex items-center justify-between">
+        <h1 class="page-title">日程管理</h1>
+        <a href="./weekly-report.html" class="text-sm text-blue-600">返回</a>
+      </div>
+      <div class="mt-3 flex gap-2 text-xs">
+        <button class="view-btn px-3 py-1.5 rounded-full bg-blue-600 text-white" data-view="day">日视图</button>
+        <button class="view-btn px-3 py-1.5 rounded-full bg-slate-100 text-slate-600" data-view="week">周视图</button>
+        <button class="view-btn px-3 py-1.5 rounded-full bg-slate-100 text-slate-600" data-view="team">团队概览</button>
+      </div>
+      <div class="mt-2 grid grid-cols-[1fr_94px] gap-2 text-xs">
+        <input id="search-input" class="rounded-lg border border-slate-200 px-2 py-2" placeholder="搜索日程/客户关键字" />
+        <select id="type-filter" class="rounded-lg border border-slate-200 px-2 py-2">
+          <option value="all">全部分类</option>
+          <option value="客户拜访">客户拜访</option>
+          <option value="内部会议">内部会议</option>
+          <option value="培训学习">培训学习</option>
+          <option value="行政事务">行政事务</option>
+        </select>
+      </div>
+
+      <div id="day-view" class="view-panel mt-3">
+        <div class="bg-white rounded-xl border border-slate-100 p-3">
+          <div class="flex items-center justify-between mb-2">
+            <button id="day-prev" class="w-7 h-7 rounded-full bg-slate-100 text-slate-500"><i class="fa-solid fa-angle-left text-xs"></i></button>
+            <p id="day-month-title" class="font-semibold text-slate-800 text-sm">2026年4月</p>
+            <button id="day-next" class="w-7 h-7 rounded-full bg-slate-100 text-slate-500"><i class="fa-solid fa-angle-right text-xs"></i></button>
+          </div>
+          <div class="grid grid-cols-7 text-center text-[11px] text-slate-400 mb-1">
+            <span>日</span><span>一</span><span>二</span><span>三</span><span>四</span><span>五</span><span>六</span>
+          </div>
+          <div id="day-calendar-grid" class="grid grid-cols-7 gap-y-1 text-center text-sm"></div>
+        </div>
+        <div class="mt-3 bg-white rounded-xl border border-slate-100 p-3">
+          <p id="day-list-title" class="font-semibold text-slate-800 text-sm"></p>
+          <div id="day-list" class="mt-2 space-y-2"></div>
+        </div>
+      </div>
+
+      <div id="week-view" class="view-panel mt-3 hidden">
+        <div class="bg-white rounded-xl border border-slate-100 p-3">
+          <div class="grid grid-cols-[1fr_auto] gap-2 items-center">
+            <input id="week-range" class="rounded-lg border border-slate-200 px-2 py-2 text-xs" value="2026-04-22 至 2026-04-28" />
+            <button id="week-apply" class="px-3 py-2 rounded-lg bg-blue-50 text-blue-600 text-xs">筛选</button>
+          </div>
+        </div>
+        <div id="week-list" class="mt-3 space-y-2"></div>
+      </div>
+
+      <div id="team-view" class="view-panel mt-3 hidden">
+        <div class="bg-white rounded-xl border border-slate-100 p-3">
+          <div class="flex items-center justify-between mb-2">
+            <p class="font-semibold text-slate-800 text-sm">团队日程概览</p>
+            <span class="text-slate-400 text-xs">本周</span>
+          </div>
+          <div id="team-list" class="space-y-2"></div>
+        </div>
+      </div>
+
+      <a href="./schedule-edit.html" class="mt-4 w-full flex items-center justify-center py-3 rounded-xl bg-blue-600 text-white text-sm font-medium">
+        <i class="fa-solid fa-plus mr-2"></i>新增日程
+      </a>
+    </div>
+    <div class="tab-bar">
+      <a class="tab-item active" href="./workbench.html"><i class="fa-solid fa-table-columns text-lg"></i><div>工作台</div></a>
+      <a class="tab-item" href="./customer-center.html"><i class="fa-regular fa-user text-lg"></i><div>客户中心</div></a>
+      <a class="tab-item" href="./marketing-center.html"><i class="fa-solid fa-bullhorn text-lg"></i><div>营销中心</div></a>
+      <a class="tab-item" href="./process-center.html"><i class="fa-solid fa-diagram-project text-lg"></i><div>流程中心</div></a>
+      <a class="tab-item" href="./management-center.html"><i class="fa-solid fa-gear text-lg"></i><div>管理中心</div></a>
+      <a class="tab-item" href="./parameter-center.html"><i class="fa-solid fa-sliders text-lg"></i><div>参数中心</div></a>
+    </div>
+  </div>
+  <script>
+    const schedules = {
+      '2026-04-15': [
+        { title: '客户拜访 · 上海市社保基金', time: '09:00-10:00', type: '客户拜访', extra: '关联拜访记录：已关联', attachments: ['拜访照片2', '会议纪要1'] },
+        { title: '培训学习 · 授信材料规范', time: '14:00-15:30', type: '培训学习', extra: '组织人：分行培训岗', attachments: [] },
+      ],
+      '2026-04-16': [
+        { title: '行政事务 · 合同档案归集', time: '11:00-12:00', type: '行政事务', extra: '地点：档案室', attachments: [] },
+      ],
+      '2026-04-18': [
+        { title: '客户拜访 · 上海科创智慧集团', time: '10:00-11:30', type: '客户拜访', extra: '关联拜访记录：已关联', attachments: ['拜访照片1'] },
+      ],
+    };
+    const weekSchedules = [
+      { date: '2026-04-22', title: '客户拜访 · 上海科创智慧集团', type: '客户拜访', time: '09:00-10:00' },
+      { date: '2026-04-23', title: '内部会议 · 周例会', type: '内部会议', time: '10:30-11:30' },
+      { date: '2026-04-24', title: '培训学习 · 信贷流程培训', type: '培训学习', time: '14:00-15:00' },
+      { date: '2026-04-25', title: '行政事务 · 材料归档', type: '行政事务', time: '15:00-16:00' },
+    ];
+    const teamSchedules = [
+      { name: '李佳琪', stats: '今日2项 / 本周9项', list: ['09:00 客户拜访（社保基金）', '14:00 培训学习（授信模板）'] },
+      { name: '魏莱', stats: '今日1项 / 本周7项', list: ['10:00 客户拜访（桑阳电子）', '16:00 行政事务（流程对齐）'] },
+      { name: '周一松', stats: '今日2项 / 本周8项', list: ['09:30 内部会议（复盘会）', '15:30 客户拜访（汉恒数智）'] },
+    ];
+
+    let currentView = 'day';
+    let month = 4;
+    let year = 2026;
+    let selectedDay = 15;
+
+    const viewBtns = document.querySelectorAll('.view-btn');
+    const panels = {
+      day: document.getElementById('day-view'),
+      week: document.getElementById('week-view'),
+      team: document.getElementById('team-view'),
+    };
+    const searchInput = document.getElementById('search-input');
+    const typeFilter = document.getElementById('type-filter');
+
+    function filtered(list) {
+      const kw = (searchInput.value || '').trim();
+      const type = typeFilter.value;
+      return list.filter((x) => (type === 'all' || x.type === type) && (!kw || `${x.title}${x.type}${x.extra || ''}`.includes(kw)));
+    }
+
+    function switchView(view) {
+      currentView = view;
+      viewBtns.forEach((btn) => {
+        const on = btn.dataset.view === view;
+        btn.classList.toggle('bg-blue-600', on);
+        btn.classList.toggle('text-white', on);
+        btn.classList.toggle('bg-slate-100', !on);
+        btn.classList.toggle('text-slate-600', !on);
+      });
+      Object.entries(panels).forEach(([k, el]) => el.classList.toggle('hidden', k !== view));
+      if (view === 'week') renderWeekList();
+      if (view === 'team') renderTeamList();
+    }
+
+    function renderCalendar() {
+      const grid = document.getElementById('day-calendar-grid');
+      const title = document.getElementById('day-month-title');
+      title.textContent = `${year}年${month}月`;
+      grid.innerHTML = '';
+      const firstWeekDay = new Date(year, month - 1, 1).getDay();
+      const daysInMonth = new Date(year, month, 0).getDate();
+
+      for (let i = 0; i < firstWeekDay; i += 1) {
+        const blank = document.createElement('span');
+        blank.className = 'h-8';
+        grid.appendChild(blank);
+      }
+      for (let day = 1; day <= daysInMonth; day += 1) {
+        const key = `${year}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+        const has = Boolean(schedules[key]);
+        const btn = document.createElement('button');
+        btn.className = `h-8 rounded-full text-sm relative ${day === selectedDay ? 'bg-blue-600 text-white' : 'text-slate-700'}`;
+        btn.textContent = day;
+        if (has && day !== selectedDay) {
+          const dot = document.createElement('span');
+          dot.className = 'absolute left-1/2 -translate-x-1/2 bottom-0.5 w-1 h-1 rounded-full bg-blue-500';
+          btn.appendChild(dot);
+        }
+        btn.addEventListener('click', () => {
+          selectedDay = day;
+          renderCalendar();
+          renderDayList();
+        });
+        grid.appendChild(btn);
+      }
+    }
+
+    function renderDayList() {
+      const key = `${year}-${String(month).padStart(2, '0')}-${String(selectedDay).padStart(2, '0')}`;
+      const list = filtered(schedules[key] || []);
+      document.getElementById('day-list-title').textContent = `${key} 日程`;
+      const box = document.getElementById('day-list');
+      if (!list.length) {
+        box.innerHTML = '<p class="text-xs text-slate-400">当天暂无符合条件日程</p>';
+        return;
+      }
+      box.innerHTML = list.map((item) => `
+        <div class="bg-slate-50 rounded-lg border border-slate-100 p-2.5">
+          <div class="flex items-center justify-between">
+            <p class="font-semibold text-slate-800 text-sm">${item.title}</p>
+            <span class="text-xs text-slate-400">${item.time}</span>
+          </div>
+          <p class="text-xs text-slate-500 mt-1">分类：${item.type} · ${item.extra || ''}</p>
+          ${item.attachments.length ? `<div class="mt-1.5 flex gap-1 text-xs">${item.attachments.map((a) => `<span class="px-2 py-0.5 rounded-full bg-white border border-slate-200 text-slate-500">${a}</span>`).join('')}</div>` : ''}
+        </div>
+      `).join('');
+    }
+
+    function renderWeekList() {
+      const list = filtered(weekSchedules);
+      const box = document.getElementById('week-list');
+      if (!list.length) {
+        box.innerHTML = '<p class="text-xs text-slate-400">该周暂无符合条件日程</p>';
+        return;
+      }
+      box.innerHTML = list.map((x) => `
+        <div class="bg-white rounded-xl border border-slate-100 p-3">
+          <div class="flex items-center justify-between">
+            <p class="font-semibold text-slate-800 text-sm">${x.title}</p>
+            <span class="text-xs text-slate-400">${x.time}</span>
+          </div>
+          <p class="text-xs text-slate-500 mt-1">日期：${x.date} · 分类：${x.type}</p>
+        </div>
+      `).join('');
+    }
+
+    function renderTeamList() {
+      const kw = (searchInput.value || '').trim();
+      const box = document.getElementById('team-list');
+      const list = teamSchedules.filter((x) => !kw || `${x.name}${x.list.join('')}`.includes(kw));
+      box.innerHTML = list.map((p) => `
+        <div class="rounded-lg border border-slate-100 p-2.5">
+          <div class="flex items-center justify-between">
+            <p class="font-semibold text-slate-800 text-sm">${p.name}</p>
+            <span class="text-xs text-slate-400">${p.stats}</span>
+          </div>
+          <ul class="mt-1 text-xs text-slate-500 space-y-0.5">
+            ${p.list.map((i) => `<li>• ${i}</li>`).join('')}
+          </ul>
+        </div>
+      `).join('');
+    }
+
+    viewBtns.forEach((btn) => btn.addEventListener('click', () => switchView(btn.dataset.view)));
+    document.getElementById('day-prev').addEventListener('click', () => {
+      if (month === 1) { month = 12; year -= 1; } else month -= 1;
+      selectedDay = 1;
+      renderCalendar();
+      renderDayList();
+    });
+    document.getElementById('day-next').addEventListener('click', () => {
+      if (month === 12) { month = 1; year += 1; } else month += 1;
+      selectedDay = 1;
+      renderCalendar();
+      renderDayList();
+    });
+    searchInput.addEventListener('input', () => {
+      if (currentView === 'day') renderDayList();
+      if (currentView === 'week') renderWeekList();
+      if (currentView === 'team') renderTeamList();
+    });
+    typeFilter.addEventListener('change', () => {
+      if (currentView === 'day') renderDayList();
+      if (currentView === 'week') renderWeekList();
+    });
+    document.getElementById('week-apply').addEventListener('click', renderWeekList);
+
+    renderCalendar();
+    renderDayList();
+  </script>
+</body>
+</html>

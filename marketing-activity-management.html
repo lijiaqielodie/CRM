@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>营销活动管理</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
+  <link rel="stylesheet" href="./styles.css" />
+</head>
+<body class="bg-[#e8ecf3] min-h-screen flex items-center justify-center p-6">
+  <div class="phone-shell">
+    <div class="notch"></div>
+    <div class="status-bar bg-white/95"><span>16:22</span><div class="flex gap-1"><i class="fa-solid fa-signal"></i><span>5G</span><i class="fa-solid fa-battery-full"></i></div></div>
+    <div class="safe-content px-4 pt-4 pb-4 overflow-y-auto">
+      <div class="flex items-center justify-between">
+        <h1 class="page-title">营销活动管理</h1>
+        <a href="./marketing-center.html" class="text-sm text-blue-600">返回</a>
+      </div>
+
+      <div class="mt-3">
+        <button id="open-create-modal" class="w-full py-2.5 rounded-xl bg-blue-600 text-white text-sm font-medium">+ 新建活动</button>
+      </div>
+
+      <div class="mt-3 flex gap-2 text-xs overflow-x-auto pb-1">
+        <button type="button" class="status-filter px-3 py-1.5 rounded-full bg-slate-900 text-white whitespace-nowrap" data-status="all">全部</button>
+        <button type="button" class="status-filter px-3 py-1.5 rounded-full bg-white border border-slate-200 text-slate-600 whitespace-nowrap" data-status="upcoming">即将开始</button>
+        <button type="button" class="status-filter px-3 py-1.5 rounded-full bg-white border border-slate-200 text-slate-600 whitespace-nowrap" data-status="ongoing">进行中</button>
+        <button type="button" class="status-filter px-3 py-1.5 rounded-full bg-white border border-slate-200 text-slate-600 whitespace-nowrap" data-status="ended">已结束</button>
+      </div>
+
+      <div id="activity-list" class="mt-2 space-y-3"></div>
+      <p id="empty-tip" class="hidden mt-3 text-center text-xs text-slate-400">当前状态暂无活动</p>
+    </div>
+
+    <div id="create-modal" class="fixed inset-0 z-[70] hidden">
+      <div class="absolute inset-0 bg-black/40" data-close-create></div>
+      <div class="absolute inset-x-0 bottom-0 bg-white rounded-t-2xl p-4 shadow-2xl max-h-[82vh] overflow-y-auto">
+        <div class="flex items-center justify-between">
+          <p class="text-sm font-semibold text-slate-900">新建活动</p>
+          <button type="button" class="text-slate-400" data-close-create><i class="fa-solid fa-xmark"></i></button>
+        </div>
+        <div class="mt-3 space-y-3 text-xs">
+          <div>
+            <p class="text-slate-500 mb-1">活动名称</p>
+            <input class="w-full rounded-xl border border-slate-200 p-2.5" placeholder="输入活动名称" />
+          </div>
+          <div>
+            <p class="text-slate-500 mb-1">目标产品</p>
+            <input class="w-full rounded-xl border border-slate-200 p-2.5" placeholder="输入目标产品" />
+          </div>
+          <div class="grid grid-cols-2 gap-2">
+            <div>
+              <p class="text-slate-500 mb-1">开始时间</p>
+              <input type="datetime-local" class="w-full rounded-xl border border-slate-200 p-2.5" />
+            </div>
+            <div>
+              <p class="text-slate-500 mb-1">截止时间</p>
+              <input type="datetime-local" class="w-full rounded-xl border border-slate-200 p-2.5" />
+            </div>
+          </div>
+          <div class="rounded-xl border border-slate-100 bg-slate-50 p-2.5">
+            <p class="text-slate-500">名单导入</p>
+            <button type="button" class="mt-1 text-blue-600">上传名单文件</button>
+          </div>
+          <div class="rounded-xl border border-slate-100 bg-slate-50 p-2.5">
+            <p class="text-slate-500 mb-1">客户标签筛选（可多选）</p>
+            <div class="flex flex-wrap gap-1.5">
+              <span class="px-2 py-1 rounded-full bg-white border border-slate-200">科技型</span>
+              <span class="px-2 py-1 rounded-full bg-white border border-slate-200">高成长</span>
+              <span class="px-2 py-1 rounded-full bg-white border border-slate-200">供应链核心</span>
+              <span class="px-2 py-1 rounded-full bg-white border border-slate-200">普惠小微</span>
+            </div>
+          </div>
+          <div class="rounded-xl border border-slate-100 bg-slate-50 p-2.5">
+            <p class="text-slate-500 mb-1">自定义反馈字段（客户经理拜访纪要必填）</p>
+            <textarea class="w-full rounded-xl border border-slate-200 p-2.5 bg-white" rows="3" placeholder="例如：产品意向、预计金额、下次跟进日期"></textarea>
+          </div>
+        </div>
+        <button type="button" class="w-full mt-4 py-3 rounded-xl bg-blue-600 text-white text-sm">创建活动</button>
+      </div>
+    </div>
+
+    <div class="tab-bar">
+      <a class="tab-item" href="./workbench.html"><i class="fa-solid fa-table-columns text-lg"></i><div>工作台</div></a>
+      <a class="tab-item" href="./customer-center.html"><i class="fa-regular fa-user text-lg"></i><div>客户中心</div></a>
+      <a class="tab-item active" href="./marketing-center.html"><i class="fa-solid fa-bullhorn text-lg"></i><div>营销中心</div></a>
+      <a class="tab-item" href="./process-center.html"><i class="fa-solid fa-diagram-project text-lg"></i><div>流程中心</div></a>
+      <a class="tab-item" href="./management-center.html"><i class="fa-solid fa-gear text-lg"></i><div>管理中心</div></a>
+      <a class="tab-item" href="./parameter-center.html"><i class="fa-solid fa-sliders text-lg"></i><div>参数中心</div></a>
+    </div>
+  </div>
+
+  <script>
+    const activities = [
+      { id: 'mk1', name: '科技金融创新营销活动', status: 'ongoing', statusText: '进行中', statusClass: 'bg-emerald-50 text-emerald-700 border-emerald-100', product: '科技金融产品包、回款通', publish: '2026-01-17', deadline: '2026-01-29', total: 15, done: 7, remain: 8 },
+      { id: 'mk2', name: '中小企业融资支持活动', status: 'ongoing', statusText: '进行中', statusClass: 'bg-emerald-50 text-emerald-700 border-emerald-100', product: '流贷、设备融资租赁、票据产品', publish: '2026-01-16', deadline: '2026-01-29', total: 35, done: 17, remain: 18 },
+      { id: 'mk3', name: '绿色金融推广活动', status: 'upcoming', statusText: '即将开始', statusClass: 'bg-sky-50 text-sky-700 border-sky-100', product: '绿色贷款、碳账户服务', publish: '2026-02-10', deadline: '2026-02-27', total: 25, done: 0, remain: 25 },
+      { id: 'mk4', name: '跨境贸易金融服务活动', status: 'ended', statusText: '已结束', statusClass: 'bg-slate-100 text-slate-600 border-slate-200', product: '跨境结算、汇率风险管理', publish: '2025-12-01', deadline: '2026-01-05', total: 20, done: 20, remain: 0 },
+    ];
+
+    const listEl = document.getElementById('activity-list');
+    const emptyTip = document.getElementById('empty-tip');
+    let currentStatus = 'all';
+
+    function cardTpl(a) {
+      return `
+        <a href="./marketing-activity-detail.html?id=${a.id}" class="block bg-white rounded-2xl p-3 shadow-sm border border-slate-100">
+          <div class="flex items-start justify-between gap-2">
+            <p class="font-semibold text-slate-800 text-sm">${a.name}</p>
+            <span class="text-[10px] px-2 py-0.5 rounded-full border shrink-0 ${a.statusClass}">${a.statusText}</span>
+          </div>
+          <p class="text-xs text-slate-500 mt-1">目标产品：${a.product}</p>
+          <p class="text-xs text-slate-500 mt-1">发布时间：${a.publish} · 截止：${a.deadline}</p>
+          <div class="mt-2 grid grid-cols-3 gap-2 text-[11px]">
+            <div class="rounded-lg bg-slate-50 p-2 border border-slate-100"><p class="text-slate-400">参与客户</p><p class="font-semibold text-slate-800 mt-0.5">${a.total}个</p></div>
+            <div class="rounded-lg bg-slate-50 p-2 border border-slate-100"><p class="text-slate-400">已反馈</p><p class="font-semibold text-slate-800 mt-0.5">${a.done}个</p></div>
+            <div class="rounded-lg bg-slate-50 p-2 border border-slate-100"><p class="text-slate-400">剩余名额</p><p class="font-semibold text-slate-800 mt-0.5">${a.remain}个</p></div>
+          </div>
+        </a>`;
+    }
+
+    function renderList() {
+      const rows = activities.filter((a) => currentStatus === 'all' || a.status === currentStatus);
+      listEl.innerHTML = rows.map(cardTpl).join('');
+      emptyTip.classList.toggle('hidden', rows.length > 0);
+    }
+
+    const filterBtns = document.querySelectorAll('.status-filter');
+    filterBtns.forEach((btn) => {
+      btn.addEventListener('click', () => {
+        currentStatus = btn.dataset.status || 'all';
+        filterBtns.forEach((b) => b.className = 'status-filter px-3 py-1.5 rounded-full bg-white border border-slate-200 text-slate-600 whitespace-nowrap');
+        btn.className = 'status-filter px-3 py-1.5 rounded-full bg-slate-900 text-white whitespace-nowrap';
+        renderList();
+      });
+    });
+
+    const createModal = document.getElementById('create-modal');
+    document.getElementById('open-create-modal')?.addEventListener('click', () => createModal.classList.remove('hidden'));
+    document.querySelectorAll('[data-close-create]').forEach((el) => {
+      el.addEventListener('click', () => createModal.classList.add('hidden'));
+    });
+
+    renderList();
+  </script>
+</body>
+</html>

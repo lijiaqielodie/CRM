@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>工作台</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
+  <link rel="stylesheet" href="./styles.css" />
+</head>
+<body class="bg-[#e8ecf3] min-h-screen flex items-center justify-center p-6">
+  <div class="phone-shell">
+    <div class="notch"></div>
+    <div class="status-bar bg-white/95"><span>16:22</span><div class="flex gap-1"><i class="fa-solid fa-signal"></i><span>5G</span><i class="fa-solid fa-battery-full"></i></div></div>
+    <div class="safe-content">
+      <div class="px-4 pt-3 pb-2 bg-white">
+        <div class="flex items-center justify-between">
+          <a href="./index.html" class="text-slate-700"><i class="fa-solid fa-angle-left"></i></a>
+          <h1 class="text-[26px] font-semibold tracking-[0.5px] text-slate-800">CRMO</h1>
+          <i class="fa-solid fa-magnifying-glass text-slate-700"></i>
+        </div>
+      </div>
+      <div class="px-4 py-4 text-white" style="background:linear-gradient(120deg,#9aa8ff 0%, #8f9ef9 45%, #9d8af7 100%);">
+        <div class="flex items-center justify-between">
+          <div class="flex items-center gap-3">
+            <img src="https://images.unsplash.com/photo-1599566150163-29194dcaad36?auto=format&fit=crop&w=120&q=80" class="w-12 h-12 rounded-full border-2 border-white/60 object-cover" alt="avatar"/>
+            <div>
+              <p class="text-[18px] font-semibold">李佳琪，您好！</p>
+              <button id="open-role-modal" type="button" class="mt-1 text-xs text-white/90 text-left underline-offset-2 hover:underline">
+                当前角色：<span id="current-role-text">机构管理员（公司）</span>
+              </button>
+            </div>
+          </div>
+          <div class="w-10 h-10 rounded-full bg-white/20 flex items-center justify-center"><i class="fa-solid fa-chart-line"></i></div>
+        </div>
+      </div>
+      <div id="role-modal" class="hidden absolute inset-0 z-40 bg-black/40">
+        <div class="absolute left-1/2 top-[170px] -translate-x-1/2 w-[310px] bg-white rounded-2xl border border-slate-100 shadow-xl p-3">
+          <div class="flex items-center justify-between mb-2">
+            <p class="text-sm font-semibold text-slate-800">选择当前角色</p>
+            <button id="close-role-modal" type="button" class="text-slate-400"><i class="fa-solid fa-xmark"></i></button>
+          </div>
+          <div id="role-options" class="space-y-1 text-sm">
+            <button type="button" class="role-option w-full text-left px-3 py-2 rounded-lg bg-blue-50 text-blue-700" data-role="机构管理员（公司）">机构管理员（公司）</button>
+            <button type="button" class="role-option w-full text-left px-3 py-2 rounded-lg hover:bg-slate-50" data-role="公司金融部-客户经理">公司金融部-客户经理</button>
+            <button type="button" class="role-option w-full text-left px-3 py-2 rounded-lg hover:bg-slate-50" data-role="公司金融部-产品经理">公司金融部-产品经理</button>
+            <button type="button" class="role-option w-full text-left px-3 py-2 rounded-lg hover:bg-slate-50" data-role="风险管理部-审批岗">风险管理部-审批岗</button>
+            <button type="button" class="role-option w-full text-left px-3 py-2 rounded-lg hover:bg-slate-50" data-role="公司金融部-团队主管">公司金融部-团队主管</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="px-4 -mt-4">
+        <div class="bg-white rounded-2xl p-4 shadow-sm">
+          <div class="grid grid-cols-4 gap-2 text-center text-xs text-slate-800">
+            <a href="./customer-visit.html" class="py-1">
+              <div class="w-10 h-10 rounded-xl bg-amber-100 text-amber-600 mx-auto flex items-center justify-center"><i class="fa-solid fa-location-dot"></i></div>
+              <p class="mt-1">客户拜访</p>
+            </a>
+            <a href="./smart-assistant.html" class="py-1">
+              <div class="w-10 h-10 rounded-xl bg-indigo-100 text-indigo-600 mx-auto flex items-center justify-center"><i class="fa-solid fa-robot"></i></div>
+              <p class="mt-1">智能助手</p>
+            </a>
+            <a href="./weekly-report.html" class="py-1">
+              <div class="w-10 h-10 rounded-xl bg-cyan-100 text-cyan-600 mx-auto flex items-center justify-center"><i class="fa-regular fa-file-lines"></i></div>
+              <p class="mt-1">工作周报</p>
+            </a>
+            <a href="./announcement.html" class="py-1">
+              <div class="w-10 h-10 rounded-xl bg-rose-100 text-rose-600 mx-auto flex items-center justify-center"><i class="fa-solid fa-bullhorn"></i></div>
+              <p class="mt-1">公告管理</p>
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <div class="px-4 mt-3">
+        <div class="bg-white rounded-xl p-3 flex items-center justify-between shadow-sm">
+          <a href="./announcement.html" class="flex items-center gap-2 min-w-0">
+            <span class="px-2 py-1 rounded-md bg-indigo-100 text-indigo-600 font-semibold text-sm">公告</span>
+            <span class="text-sm text-slate-700 truncate">访前一页纸生成异常处理通知</span>
+          </a>
+          <span class="text-xs text-slate-400">2026.04.23</span>
+        </div>
+      </div>
+
+      <div class="px-4 mt-3">
+        <div class="bg-white rounded-2xl p-4 shadow-sm">
+          <div class="flex items-center justify-between mb-3">
+            <h3 class="font-semibold text-slate-800">待办任务</h3>
+            <div class="flex items-center gap-2 text-xs">
+              <button data-view="list" class="todo-view-btn px-2 py-1 rounded-md bg-blue-50 text-blue-600">列表视图</button>
+              <button data-view="calendar" class="todo-view-btn px-2 py-1 rounded-md bg-slate-100 text-slate-600">日历视图</button>
+            </div>
+          </div>
+          <div id="todo-status-filters" class="flex gap-2 text-xs mb-3">
+            <button data-status="all" class="todo-status-btn px-2 py-1 rounded-full bg-blue-600 text-white">全部</button>
+            <button data-status="pending" class="todo-status-btn px-2 py-1 rounded-full bg-slate-100 text-slate-600">待处理</button>
+            <button data-status="processing" class="todo-status-btn px-2 py-1 rounded-full bg-slate-100 text-slate-600">处理中</button>
+            <button data-status="done" class="todo-status-btn px-2 py-1 rounded-full bg-slate-100 text-slate-600">已完成</button>
+          </div>
+          <div id="todo-list-view" class="space-y-3 text-sm">
+            <a href="./task-detail.html?id=T20260424001" data-task-status="pending" class="todo-task-card block rounded-xl border border-rose-200 bg-rose-50 p-3">
+              <div class="flex items-center justify-between">
+                <p class="font-semibold text-slate-800">开户尽调补件审批</p>
+                <span class="text-[10px] px-2 py-0.5 rounded-full bg-rose-100 text-rose-600">高优先级</span>
+              </div>
+              <p class="text-slate-600 mt-1">关联客户：华兴科技集团</p>
+              <p class="text-rose-600 mt-1">截止：今日 18:00（临近截止）</p>
+              <p class="text-xs text-slate-500 mt-1">创建：2026-04-24 10:21 · 类型：开户尽调</p>
+            </a>
+            <a href="./task-detail.html?id=T20260418001" data-task-status="processing" class="todo-task-card block rounded-xl border border-amber-200 bg-amber-50 p-3">
+              <div class="flex items-center justify-between">
+                <p class="font-semibold text-slate-800">账户权限修改复核</p>
+                <span class="text-[10px] px-2 py-0.5 rounded-full bg-amber-100 text-amber-700">长期未处理</span>
+              </div>
+              <p class="text-slate-600 mt-1">关联客户：海拓物流有限公司</p>
+              <p class="text-slate-600 mt-1">截止：2026-04-27 12:00</p>
+              <p class="text-xs text-slate-500 mt-1">创建：2026-04-18 09:15 · 类型：账户权限修改</p>
+            </a>
+            <a href="./task-detail.html?id=T20260419001" data-task-status="done" class="todo-task-card block rounded-xl border border-emerald-200 bg-emerald-50 p-3 hidden">
+              <div class="flex items-center justify-between">
+                <p class="font-semibold text-slate-800">客户信息变更校验</p>
+                <span class="text-[10px] px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-700">已完成</span>
+              </div>
+              <p class="text-slate-600 mt-1">关联客户：华达连锁商贸</p>
+              <p class="text-slate-600 mt-1">截止：2026-04-20 16:00</p>
+              <p class="text-xs text-slate-500 mt-1">创建：2026-04-19 11:30 · 类型：客户信息变更</p>
+            </a>
+          </div>
+          <div id="todo-calendar-view" class="hidden rounded-xl border border-slate-200 bg-slate-50 p-3 text-sm">
+            <div class="bg-white rounded-2xl p-3">
+              <div class="flex items-center justify-between mb-2">
+                <button id="calendar-prev" class="w-7 h-7 rounded-full bg-slate-100 text-slate-500"><i class="fa-solid fa-angle-left text-xs"></i></button>
+                <p id="calendar-month-title" class="font-semibold text-slate-800">2026年4月</p>
+                <button id="calendar-next" class="w-7 h-7 rounded-full bg-slate-100 text-slate-500"><i class="fa-solid fa-angle-right text-xs"></i></button>
+              </div>
+              <div class="grid grid-cols-7 text-center text-xs text-slate-400 mb-1">
+                <span>日</span><span>一</span><span>二</span><span>三</span><span>四</span><span>五</span><span>六</span>
+              </div>
+              <div id="calendar-grid" class="grid grid-cols-7 gap-y-1 text-center text-sm"></div>
+            </div>
+            <div class="mt-3 bg-white rounded-xl p-3">
+              <p id="calendar-day-title" class="font-semibold text-slate-800">2026-04-24 任务</p>
+              <div id="calendar-day-tasks" class="mt-2 space-y-2 text-xs"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="px-4 mt-3 pb-4">
+        <div class="bg-white rounded-2xl p-4 shadow-sm">
+          <div class="flex items-center justify-between mb-3">
+            <h3 class="font-semibold text-slate-800">业务提醒</h3>
+            <div class="flex gap-2 text-xs">
+              <button id="mark-all-read-workbench" class="px-2 py-1 rounded-md bg-slate-100 text-slate-600">全部标为已读</button>
+              <a href="./business-reminder.html" class="px-2 py-1 rounded-md bg-blue-50 text-blue-600">查看全部</a>
+            </div>
+          </div>
+          <div id="reminder-list-workbench" class="space-y-2 text-sm">
+            <a href="./reminder-detail.html?id=R20260424001" data-read="false" class="reminder-item flex items-start gap-2 p-2 rounded-lg bg-blue-50">
+              <span class="reminder-dot w-2 h-2 mt-2 rounded-full bg-blue-600"></span>
+              <div class="flex-1 min-w-0">
+                <p class="font-medium text-slate-800 truncate">风险提示：星云制造授信临期提醒</p>
+                <p class="text-xs text-slate-500 truncate">关联客户：星云制造股份 · 提前3天提醒</p>
+              </div>
+              <span class="text-xs text-slate-400">10:30</span>
+            </a>
+            <a href="./reminder-detail.html?id=R20260424002" data-read="false" class="reminder-item flex items-start gap-2 p-2 rounded-lg bg-blue-50">
+              <span class="reminder-dot w-2 h-2 mt-2 rounded-full bg-blue-600"></span>
+              <div class="flex-1 min-w-0">
+                <p class="font-medium text-slate-800 truncate">经营动态：海拓物流近30日结算额上升12%</p>
+                <p class="text-xs text-slate-500 truncate">关联客户：海拓物流有限公司</p>
+              </div>
+              <span class="text-xs text-slate-400">09:05</span>
+            </a>
+            <a href="./reminder-detail.html?id=R20260423001" data-read="true" class="reminder-item flex items-start gap-2 p-2 rounded-lg bg-slate-50">
+              <span class="reminder-dot w-2 h-2 mt-2 rounded-full bg-transparent"></span>
+              <div class="flex-1 min-w-0">
+                <p class="font-medium text-slate-700 truncate">营销商机：现金管理方案客户点击率上升</p>
+                <p class="text-xs text-slate-500 truncate">关联客户：华达连锁商贸</p>
+              </div>
+              <span class="text-xs text-slate-400">昨天</span>
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="tab-bar">
+      <a class="tab-item active" href="./workbench.html"><i class="fa-solid fa-table-columns text-lg"></i><div>工作台</div></a>
+      <a class="tab-item" href="./customer-center.html"><i class="fa-regular fa-user text-lg"></i><div>客户中心</div></a>
+      <a class="tab-item" href="./marketing-center.html"><i class="fa-solid fa-bullhorn text-lg"></i><div>营销中心</div></a>
+      <a class="tab-item" href="./process-center.html"><i class="fa-solid fa-diagram-project text-lg"></i><div>流程中心</div></a>
+      <a class="tab-item" href="./management-center.html"><i class="fa-solid fa-gear text-lg"></i><div>管理中心</div></a>
+      <a class="tab-item" href="./parameter-center.html"><i class="fa-solid fa-sliders text-lg"></i><div>参数中心</div></a>
+    </div>
+  </div>
+  <script>
+    const viewButtons = document.querySelectorAll('.todo-view-btn');
+    const statusButtons = document.querySelectorAll('.todo-status-btn');
+    const statusFilters = document.getElementById('todo-status-filters');
+    const listView = document.getElementById('todo-list-view');
+    const calendarView = document.getElementById('todo-calendar-view');
+    const taskCards = document.querySelectorAll('.todo-task-card');
+    const reminderListWorkbench = document.getElementById('reminder-list-workbench');
+    const markAllReadWorkbench = document.getElementById('mark-all-read-workbench');
+    const calendarGrid = document.getElementById('calendar-grid');
+    const calendarMonthTitle = document.getElementById('calendar-month-title');
+    const calendarDayTitle = document.getElementById('calendar-day-title');
+    const calendarDayTasks = document.getElementById('calendar-day-tasks');
+    let calendarMonth = 4;
+    let calendarYear = 2026;
+    let selectedDay = 24;
+
+    const calendarTaskMap = {
+      '2026-04-18': [{ title: '开户尽调补件审批', status: '待处理', className: 'border-rose-200 text-rose-700', href: './task-detail.html?id=T20260424001' }],
+      '2026-04-20': [{ title: '开户尽调补件审批', status: '待处理', className: 'border-rose-200 text-rose-700', href: './task-detail.html?id=T20260424001' }],
+      '2026-04-24': [
+        { title: '开户尽调补件审批', status: '待处理', className: 'border-rose-200 text-rose-700', href: './task-detail.html?id=T20260424001' },
+        { title: '账户权限修改复核', status: '处理中', className: 'border-amber-200 text-amber-700', href: './task-detail.html?id=T20260418001' }
+      ],
+      '2026-04-27': [{ title: '账户权限修改复核', status: '处理中', className: 'border-amber-200 text-amber-700', href: './task-detail.html?id=T20260418001' }]
+    };
+
+    function setActiveStyle(buttons, activeBtn, activeClasses, inactiveClasses) {
+      buttons.forEach((btn) => {
+        btn.classList.remove(...activeClasses);
+        btn.classList.add(...inactiveClasses);
+      });
+      activeBtn.classList.remove(...inactiveClasses);
+      activeBtn.classList.add(...activeClasses);
+    }
+
+    viewButtons.forEach((btn) => {
+      btn.addEventListener('click', () => {
+        setActiveStyle(viewButtons, btn, ['bg-blue-50', 'text-blue-600'], ['bg-slate-100', 'text-slate-600']);
+        const isList = btn.dataset.view === 'list';
+        listView.classList.toggle('hidden', !isList);
+        calendarView.classList.toggle('hidden', isList);
+        statusFilters.classList.toggle('hidden', !isList);
+      });
+    });
+
+    statusButtons.forEach((btn) => {
+      btn.addEventListener('click', () => {
+        setActiveStyle(statusButtons, btn, ['bg-blue-600', 'text-white'], ['bg-slate-100', 'text-slate-600']);
+        const status = btn.dataset.status;
+        taskCards.forEach((card) => {
+          const matched = status === 'all' || card.dataset.taskStatus === status;
+          card.classList.toggle('hidden', !matched);
+        });
+      });
+    });
+
+    function normalizeReminders() {
+      const items = Array.from(reminderListWorkbench.querySelectorAll('.reminder-item'));
+      items.sort((a, b) => (a.dataset.read === 'false' && b.dataset.read === 'true' ? -1 : a.dataset.read === b.dataset.read ? 0 : 1));
+      items.forEach((item) => reminderListWorkbench.appendChild(item));
+      items.forEach((item) => {
+        const isRead = item.dataset.read === 'true';
+        const dot = item.querySelector('.reminder-dot');
+        item.classList.toggle('bg-blue-50', !isRead);
+        item.classList.toggle('bg-slate-50', isRead);
+        dot.classList.toggle('bg-blue-600', !isRead);
+        dot.classList.toggle('bg-transparent', isRead);
+      });
+    }
+
+    reminderListWorkbench.querySelectorAll('.reminder-item').forEach((item) => {
+      item.addEventListener('click', (event) => {
+        event.preventDefault();
+        item.dataset.read = 'true';
+        normalizeReminders();
+        const targetUrl = item.getAttribute('href');
+        setTimeout(() => {
+          window.location.href = targetUrl;
+        }, 120);
+      });
+    });
+
+    markAllReadWorkbench.addEventListener('click', () => {
+      reminderListWorkbench.querySelectorAll('.reminder-item').forEach((item) => {
+        item.dataset.read = 'true';
+      });
+      normalizeReminders();
+    });
+
+    function renderCalendar() {
+      calendarGrid.innerHTML = '';
+      calendarMonthTitle.textContent = `${calendarYear}年${calendarMonth}月`;
+      const firstWeekDay = new Date(calendarYear, calendarMonth - 1, 1).getDay();
+      const daysInMonth = new Date(calendarYear, calendarMonth, 0).getDate();
+
+      for (let i = 0; i < firstWeekDay; i += 1) {
+        const blank = document.createElement('span');
+        blank.className = 'h-9';
+        calendarGrid.appendChild(blank);
+      }
+
+      for (let day = 1; day <= daysInMonth; day += 1) {
+        const dateKey = `${calendarYear}-${String(calendarMonth).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+        const hasTask = Boolean(calendarTaskMap[dateKey]);
+        const dayBtn = document.createElement('button');
+        dayBtn.className = `h-9 text-sm relative rounded-full ${selectedDay === day ? 'bg-blue-600 text-white' : 'text-slate-700'}`;
+        dayBtn.textContent = day;
+        if (hasTask && selectedDay !== day) {
+          const marker = document.createElement('span');
+          marker.className = 'absolute left-1/2 -translate-x-1/2 bottom-0.5 w-1 h-1 rounded-full bg-blue-500';
+          dayBtn.appendChild(marker);
+        }
+        dayBtn.addEventListener('click', () => {
+          selectedDay = day;
+          renderCalendar();
+          renderDayTasks();
+        });
+        calendarGrid.appendChild(dayBtn);
+      }
+    }
+
+    function renderDayTasks() {
+      const key = `${calendarYear}-${String(calendarMonth).padStart(2, '0')}-${String(selectedDay).padStart(2, '0')}`;
+      calendarDayTitle.textContent = `${key} 任务`;
+      const dayTasks = calendarTaskMap[key] || [];
+      calendarDayTasks.innerHTML = '';
+      if (!dayTasks.length) {
+        calendarDayTasks.innerHTML = '<p class="text-slate-400 text-xs">当天暂无任务</p>';
+        return;
+      }
+      dayTasks.forEach((task) => {
+        const taskNode = document.createElement('a');
+        taskNode.href = task.href;
+        taskNode.className = `block p-2 rounded-lg bg-white border ${task.className}`;
+        taskNode.textContent = `${task.title} · ${task.status}`;
+        calendarDayTasks.appendChild(taskNode);
+      });
+    }
+
+    document.getElementById('calendar-prev').addEventListener('click', () => {
+      if (calendarMonth === 1) {
+        calendarMonth = 12;
+        calendarYear -= 1;
+      } else {
+        calendarMonth -= 1;
+      }
+      selectedDay = 1;
+      renderCalendar();
+      renderDayTasks();
+    });
+
+    document.getElementById('calendar-next').addEventListener('click', () => {
+      if (calendarMonth === 12) {
+        calendarMonth = 1;
+        calendarYear += 1;
+      } else {
+        calendarMonth += 1;
+      }
+      selectedDay = 1;
+      renderCalendar();
+      renderDayTasks();
+    });
+
+    const currentRoleText = document.getElementById('current-role-text');
+    const roleModal = document.getElementById('role-modal');
+    document.getElementById('open-role-modal').addEventListener('click', () => {
+      roleModal.classList.remove('hidden');
+    });
+    document.getElementById('close-role-modal').addEventListener('click', () => {
+      roleModal.classList.add('hidden');
+    });
+    roleModal.addEventListener('click', (e) => {
+      if (e.target === roleModal) roleModal.classList.add('hidden');
+    });
+    document.querySelectorAll('.role-option').forEach((btn) => {
+      btn.addEventListener('click', () => {
+        currentRoleText.textContent = btn.dataset.role;
+        document.querySelectorAll('.role-option').forEach((b) => {
+          b.classList.remove('bg-blue-50', 'text-blue-700');
+          b.classList.add('hover:bg-slate-50');
+        });
+        btn.classList.add('bg-blue-50', 'text-blue-700');
+        btn.classList.remove('hover:bg-slate-50');
+        roleModal.classList.add('hidden');
+      });
+    });
+
+    normalizeReminders();
+    renderCalendar();
+    renderDayTasks();
+  </script>
+</body>
+</html>

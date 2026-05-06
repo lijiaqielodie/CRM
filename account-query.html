@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>账户明细查询</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
+  <link rel="stylesheet" href="./styles.css" />
+</head>
+<body class="bg-[#e8ecf3] min-h-screen flex items-center justify-center p-6">
+  <div class="phone-shell">
+    <div class="notch"></div>
+    <div class="status-bar bg-white/95"><span>16:22</span><div class="flex gap-1"><i class="fa-solid fa-signal"></i><span>5G</span><i class="fa-solid fa-battery-full"></i></div></div>
+    <div class="safe-content px-4 pt-4 pb-4">
+      <div class="flex items-center justify-between">
+        <h1 class="page-title">账户明细查询</h1>
+        <a href="./customer-center.html" class="text-sm text-blue-600">返回</a>
+      </div>
+      <div class="mt-3 bg-white rounded-2xl p-4 shadow-sm text-sm space-y-3">
+        <div>
+          <p class="text-xs text-slate-500 mb-1">查询类型</p>
+          <button id="type-trigger" type="button" class="w-full rounded-xl border border-slate-200 p-3 text-left flex items-center justify-between">
+            <span id="type-label">账户明细查询</span>
+            <i class="fa-solid fa-angle-down text-slate-400"></i>
+          </button>
+          <p id="type-tip" class="text-[10px] text-slate-400 mt-1 hidden">该类型由上一页入口带入，当前不可切换。</p>
+        </div>
+        <div>
+          <p class="text-xs text-slate-500 mb-1">企业名称</p>
+          <input id="enterprise-input" class="w-full rounded-xl border border-slate-200 p-3" placeholder="输入企业名称" />
+        </div>
+        <div id="dynamic-fields" class="space-y-3"></div>
+        <button id="query-btn" class="w-full py-3 rounded-xl bg-blue-600 text-white">查询</button>
+      </div>
+
+    </div>
+
+    <div id="type-modal" class="fixed inset-0 z-[70] hidden">
+      <div class="absolute inset-0 bg-black/40" data-close-type></div>
+      <div class="absolute inset-x-0 bottom-0 bg-white rounded-t-2xl p-4 shadow-2xl">
+        <p class="text-sm font-semibold text-slate-900 mb-3">选择查询类型</p>
+        <div class="space-y-2">
+          <button type="button" class="w-full py-3 rounded-xl border border-slate-200 text-left px-3 type-option" data-type="detail">账户明细查询</button>
+          <button type="button" class="w-full py-3 rounded-xl border border-slate-200 text-left px-3 type-option" data-type="balance">实施余额查询</button>
+          <button type="button" class="w-full py-3 rounded-xl border border-slate-200 text-left px-3 type-option" data-type="account">账户查询</button>
+        </div>
+        <button type="button" class="w-full mt-3 py-3 rounded-xl bg-slate-100 text-slate-700" data-close-type>取消</button>
+      </div>
+    </div>
+    <div class="tab-bar">
+      <a class="tab-item" href="./workbench.html"><i class="fa-solid fa-table-columns text-lg"></i><div>工作台</div></a>
+      <a class="tab-item active" href="./customer-center.html"><i class="fa-regular fa-user text-lg"></i><div>客户中心</div></a>
+      <a class="tab-item" href="./marketing-center.html"><i class="fa-solid fa-bullhorn text-lg"></i><div>营销中心</div></a>
+      <a class="tab-item" href="./process-center.html"><i class="fa-solid fa-diagram-project text-lg"></i><div>流程中心</div></a>
+      <a class="tab-item" href="./management-center.html"><i class="fa-solid fa-gear text-lg"></i><div>管理中心</div></a>
+      <a class="tab-item" href="./parameter-center.html"><i class="fa-solid fa-sliders text-lg"></i><div>参数中心</div></a>
+    </div>
+  </div>
+  <script>
+    const params = new URLSearchParams(window.location.search);
+    const account = params.get('account') || '';
+    const locked = params.get('locked') === '1';
+    const initialType = params.get('type') === 'detail' ? 'detail' : 'detail';
+
+    const typeMap = {
+      detail: {
+        label: '账户明细查询',
+        fields: `
+          <div>
+            <p class="text-xs text-slate-500 mb-1">账号</p>
+            <input id="account-input" class="w-full rounded-xl border border-slate-200 p-3" placeholder="输入账号后4位或完整账号" />
+          </div>
+          <div>
+            <p class="text-xs text-slate-500 mb-1">币种</p>
+            <select id="currency-input" class="w-full rounded-xl border border-slate-200 p-3 bg-white">
+              <option value="CNY">人民币 CNY</option>
+              <option value="USD">美元 USD</option>
+              <option value="HKD">港币 HKD</option>
+            </select>
+          </div>
+          <div>
+            <p class="text-xs text-slate-500 mb-1">交易日期</p>
+            <input id="trade-date-input" type="date" class="w-full rounded-xl border border-slate-200 p-3" />
+          </div>
+        `,
+      },
+      balance: {
+        label: '实施余额查询',
+        fields: `
+          <div>
+            <p class="text-xs text-slate-500 mb-1">账号</p>
+            <input id="account-input" class="w-full rounded-xl border border-slate-200 p-3" placeholder="输入账号后4位或完整账号" />
+          </div>
+        `,
+      },
+      account: {
+        label: '账户查询',
+        fields: `
+          <div>
+            <p class="text-xs text-slate-500 mb-1">机构</p>
+            <input id="org-input" class="w-full rounded-xl border border-slate-200 p-3" placeholder="输入机构名称" />
+          </div>
+          <div>
+            <p class="text-xs text-slate-500 mb-1">查询方式</p>
+            <select id="query-way-input" class="w-full rounded-xl border border-slate-200 p-3 bg-white">
+              <option>账号</option>
+              <option>客户号</option>
+              <option>账户名</option>
+              <option>客户名</option>
+            </select>
+          </div>
+          <div>
+            <p class="text-xs text-slate-500 mb-1">账号</p>
+            <input id="account-input" class="w-full rounded-xl border border-slate-200 p-3" placeholder="输入账号或关键词" />
+          </div>
+          <div>
+            <p class="text-xs text-slate-500 mb-1">查询日期</p>
+            <input id="query-date-input" type="date" class="w-full rounded-xl border border-slate-200 p-3" />
+          </div>
+        `,
+      },
+    };
+
+    let currentType = initialType;
+    const typeLabel = document.getElementById('type-label');
+    const typeTrigger = document.getElementById('type-trigger');
+    const typeTip = document.getElementById('type-tip');
+    const dynamicFields = document.getElementById('dynamic-fields');
+    const typeModal = document.getElementById('type-modal');
+
+    function renderFields() {
+      typeLabel.textContent = typeMap[currentType].label;
+      dynamicFields.innerHTML = typeMap[currentType].fields;
+      const acctInput = document.getElementById('account-input');
+      if (acctInput && account) acctInput.value = account;
+    }
+
+    renderFields();
+
+    if (locked) {
+      typeTip.classList.remove('hidden');
+      typeTrigger.classList.add('bg-slate-50', 'text-slate-400', 'cursor-not-allowed');
+    } else {
+      typeTrigger.addEventListener('click', () => typeModal.classList.remove('hidden'));
+    }
+
+    document.querySelectorAll('[data-close-type]').forEach((el) => {
+      el.addEventListener('click', () => typeModal.classList.add('hidden'));
+    });
+    document.querySelectorAll('.type-option').forEach((btn) => {
+      btn.addEventListener('click', () => {
+        currentType = btn.getAttribute('data-type') || 'detail';
+        renderFields();
+        typeModal.classList.add('hidden');
+      });
+    });
+    function goDetailPage() {
+      const enterprise = document.getElementById('enterprise-input')?.value || '';
+      const accountVal = document.getElementById('account-input')?.value || '';
+      const query = new URLSearchParams();
+      if (enterprise) query.set('enterprise', enterprise);
+      if (accountVal) query.set('account', accountVal);
+
+      if (currentType === 'detail') {
+        const currency = document.getElementById('currency-input')?.value || 'CNY';
+        const tradeDate = document.getElementById('trade-date-input')?.value || '';
+        query.set('currency', currency);
+        if (tradeDate) query.set('tradeDate', tradeDate);
+        window.location.href = `./account-detail-result.html?${query.toString()}`;
+      } else if (currentType === 'balance') {
+        window.location.href = `./account-balance-result.html?${query.toString()}`;
+      } else {
+        const org = document.getElementById('org-input')?.value || '';
+        const way = document.getElementById('query-way-input')?.value || '';
+        const qDate = document.getElementById('query-date-input')?.value || '';
+        if (org) query.set('org', org);
+        if (way) query.set('way', way);
+        if (qDate) query.set('queryDate', qDate);
+        window.location.href = `./account-search-result.html?${query.toString()}`;
+      }
+    }
+    document.getElementById('query-btn')?.addEventListener('click', goDetailPage);
+  </script>
+</body>
+</html>

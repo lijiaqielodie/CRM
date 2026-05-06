@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>知识专区</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
+  <link rel="stylesheet" href="./styles.css" />
+  <style>
+    /* 对齐 assets/knowledge1～knowledge4.jpg：知识库独立底栏（非全局五 Tab） */
+    .kb-shell .kb-main {
+      height: calc(100% - 44px - 56px);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+    .kb-inner-scroll {
+      flex: 1;
+      min-height: 0;
+      overflow-y: auto;
+      -webkit-overflow-scrolling: touch;
+    }
+    .wm-diagonal {
+      position: relative;
+    }
+    .wm-diagonal::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      background-image: repeating-linear-gradient(
+        -28deg,
+        transparent,
+        transparent 48px,
+        rgba(148, 163, 184, 0.06) 48px,
+        rgba(148, 163, 184, 0.06) 49px
+      );
+      z-index: 0;
+    }
+    .wm-diagonal > * {
+      position: relative;
+      z-index: 1;
+    }
+    .fab-qa {
+      position: absolute;
+      right: 14px;
+      bottom: 76px;
+      z-index: 20;
+    }
+    /* knowledge6.jpg 左侧选中：深蓝底 + 左侧竖条 */
+    .nav-side-item {
+      border-left: 4px solid transparent;
+    }
+    .nav-side-item.nav-side-active {
+      background-color: rgb(29 78 216);
+      color: #fff;
+      font-weight: 600;
+      border-left-color: rgb(96 165 250);
+    }
+  </style>
+</head>
+<body class="bg-[#e8ecf3] min-h-screen flex items-center justify-center p-6">
+  <div class="phone-shell kb-shell">
+    <div class="notch"></div>
+    <div class="status-bar bg-white/95"><span>16:22</span><div class="flex gap-1"><i class="fa-solid fa-signal"></i><span>5G</span><i class="fa-solid fa-battery-full"></i></div></div>
+
+    <div class="kb-main bg-white">
+      <!-- ========== 首页 · knowledge1（全局搜索）/ knowledge5（AI智搜）/ knowledge6（知识导航） ========== -->
+      <div id="panel-home" class="kb-panel flex flex-col flex-1 min-h-0 overflow-hidden bg-white">
+        <div class="shrink-0 bg-gradient-to-b from-sky-100 via-blue-50/90 to-white px-3 pt-2 pb-3">
+          <div class="flex items-center gap-2 mb-3">
+            <a href="./marketing-center.html" class="text-slate-700 text-lg leading-none"><i class="fa-solid fa-angle-left"></i></a>
+            <span class="flex-1 text-center font-semibold text-[17px] text-slate-900">知识专区</span>
+            <span class="w-6"></span>
+          </div>
+          <button type="button" id="home-series-dd" class="flex items-center gap-1 text-[13px] text-slate-700 mb-3 text-left">
+            <span id="home-series-label">总行规章制度系列</span>
+            <i class="fa-solid fa-caret-down text-xs text-slate-500"></i>
+          </button>
+          <div class="flex items-center gap-2 mb-3">
+            <div class="w-10 h-10 rounded-lg bg-blue-600 flex items-center justify-center text-white font-bold text-lg shrink-0">知</div>
+            <span class="text-xl font-bold text-blue-600 tracking-tight">知识库</span>
+          </div>
+          <div class="flex justify-around items-end border-b border-blue-100/80 pb-0 mb-3">
+            <button type="button" class="home-search-tab pb-2 px-0.5 text-[15px] font-semibold text-blue-600 border-b-[3px] border-blue-600" data-hstab="global">全局搜索</button>
+            <button type="button" class="home-search-tab pb-2 px-0.5 text-[14px] text-slate-600 border-b-[3px] border-transparent flex items-center gap-1" data-hstab="ai">
+              <span class="ai-mark text-lg italic font-bold text-slate-500">AI</span><span class="home-ai-rest text-slate-600">智搜</span>
+            </button>
+            <button type="button" class="home-search-tab pb-2 px-0.5 text-[14px] text-slate-600 border-b-[3px] border-transparent" data-hstab="nav">知识导航</button>
+          </div>
+          <div id="home-global-search-row" class="flex gap-2 items-stretch">
+            <input id="home-search-input" type="search" placeholder="请输入内容" class="flex-1 rounded-xl bg-white border border-slate-200 px-3 py-2.5 text-[14px] placeholder:text-slate-400 outline-none focus:border-blue-400" />
+            <button type="button" id="home-search-btn" class="w-11 shrink-0 rounded-xl bg-blue-600 text-white flex items-center justify-center active:bg-blue-700">
+              <i class="fa-solid fa-magnifying-glass"></i>
+            </button>
+          </div>
+        </div>
+
+        <!-- knowledge1：热门知识 -->
+        <div id="home-mode-global" class="home-mode-pane kb-inner-scroll flex flex-col flex-1 min-h-0">
+          <div class="px-3 pb-6 wm-diagonal bg-white flex-1">
+            <div class="flex items-center justify-between pt-4 pb-2">
+              <span class="font-bold text-[16px] text-slate-900">热门知识</span>
+              <button type="button" id="hot-refresh" class="flex items-center gap-1 text-[13px] text-blue-600">
+                <i class="fa-solid fa-rotate-right"></i>
+                换一批
+              </button>
+            </div>
+            <ol id="hot-list" class="list-none space-y-0 divide-y divide-slate-100 border-t border-slate-100"></ol>
+          </div>
+        </div>
+
+        <!-- knowledge5.jpg：AI智搜（首页） -->
+        <div id="home-mode-ai" class="home-mode-pane hidden kb-inner-scroll flex flex-col flex-1 min-h-0 bg-gradient-to-b from-sky-50 via-blue-50/40 to-white px-3 pb-8">
+          <div class="mt-3 mx-auto w-full max-w-[340px] rounded-[22px] bg-white shadow-[0_8px_28px_rgba(59,120,231,0.12)] border border-slate-100/80 px-4 pt-5 pb-5">
+            <div class="flex justify-center mb-3">
+              <span class="inline-block rounded-full bg-sky-100 text-sky-800 text-[12px] px-3 py-1.5">Hi，我是AI助理小海～</span>
+            </div>
+            <div class="flex justify-center mb-4">
+              <div class="relative w-[120px] h-[120px] rounded-full flex items-center justify-center bg-gradient-to-br from-sky-200 via-blue-100 to-white shadow-inner ring-4 ring-sky-200/60">
+                <div class="absolute inset-2 rounded-full bg-gradient-to-b from-white/90 to-sky-50/80 flex items-center justify-center text-6xl leading-none select-none" aria-hidden="true">🐬</div>
+                <span class="absolute -bottom-0.5 right-3 w-8 h-8 rounded-full bg-blue-500/90 flex items-center justify-center text-white text-sm border-2 border-white shadow" title="耳机">
+                  <i class="fa-solid fa-headset text-xs"></i>
+                </span>
+              </div>
+            </div>
+            <p class="text-center text-[14px] text-slate-500 leading-relaxed">我能帮您解答客户提问</p>
+            <p class="text-center text-[14px] text-slate-500 leading-relaxed mt-1">请将问题描述或报错截图发给我吧！</p>
+            <div class="mt-5 relative rounded-2xl border-2 border-[#3b78e7] bg-white overflow-hidden min-h-[112px]">
+              <textarea id="home-ai-chat-input" rows="3" placeholder="输入问题或直接发送图片" class="w-full px-3 pt-3 pb-10 text-[14px] text-slate-800 placeholder:text-slate-400 resize-none outline-none border-0 bg-transparent"></textarea>
+              <div class="absolute bottom-2 right-2 flex items-center gap-2">
+                <button type="button" class="w-9 h-9 rounded-lg text-slate-500 flex items-center justify-center active:bg-slate-100" title="相册">
+                  <i class="fa-regular fa-image text-lg"></i>
+                </button>
+                <button type="button" id="home-ai-send-btn" class="w-10 h-10 rounded-full bg-slate-300 text-white flex items-center justify-center active:bg-slate-400">
+                  <i class="fa-solid fa-arrow-right text-sm"></i>
+                </button>
+              </div>
+            </div>
+            <p class="mt-3 text-center text-[11px] text-slate-400 leading-snug px-1">内测阶段仅支持咨询企业电子渠道相关问题哦～</p>
+          </div>
+        </div>
+
+        <!-- knowledge6.jpg：知识导航（首页） -->
+        <div id="home-mode-nav" class="home-mode-pane hidden flex flex-1 min-h-0 overflow-hidden border-t border-slate-100">
+          <aside id="home-nav-sidebar" class="w-[30%] min-w-[96px] max-w-[120px] shrink-0 bg-[#eef2ff] overflow-y-auto border-r border-slate-100/80"></aside>
+          <div id="home-nav-detail" class="flex-1 min-w-0 overflow-y-auto bg-white px-3 py-3"></div>
+        </div>
+      </div>
+
+      <!-- ========== 专家问答 · knowledge2.jpg（仅列表+提问） ========== -->
+      <div id="panel-qa" class="kb-panel hidden relative flex flex-col flex-1 min-h-0 overflow-hidden bg-white">
+        <div class="px-3 pt-2 pb-2 shrink-0 border-b border-slate-100">
+          <div class="flex items-center gap-2 mb-3">
+            <a href="./marketing-center.html" class="text-slate-700 text-lg"><i class="fa-solid fa-angle-left"></i></a>
+            <span class="flex-1 text-center font-semibold text-[17px] text-slate-900">专家问答</span>
+            <span class="w-6"></span>
+          </div>
+          <div class="relative mb-3">
+            <input type="search" placeholder="请输入关键字" class="w-full rounded-full bg-slate-50 border border-slate-200 py-2 pl-3 pr-10 text-[14px] outline-none focus:border-blue-400" />
+            <i class="fa-solid fa-magnifying-glass absolute right-3 top-1/2 -translate-y-1/2 text-slate-400"></i>
+          </div>
+          <div class="flex gap-6 border-b border-slate-100">
+            <button type="button" class="qa-subtab pb-2 text-[15px] font-semibold text-blue-600 border-b-[3px] border-blue-600" data-qtab="all">全部问答</button>
+            <button type="button" class="qa-subtab pb-2 text-[15px] text-slate-700 border-b-[3px] border-transparent" data-qtab="mine">我的提问</button>
+          </div>
+          <div class="flex gap-6 pt-3 text-[13px] text-slate-600 pb-1">
+            <button type="button" class="flex items-center gap-0.5 text-blue-600 font-medium">
+              回复时间 <span class="flex flex-col text-[9px] leading-none ml-0.5 opacity-70"><i class="fa-solid fa-caret-up"></i><i class="fa-solid fa-caret-down -mt-0.5"></i></span>
+            </button>
+            <button type="button" class="flex items-center gap-0.5">
+              访问量 <span class="flex flex-col text-[9px] leading-none ml-0.5 opacity-70"><i class="fa-solid fa-caret-up"></i><i class="fa-solid fa-caret-down -mt-0.5"></i></span>
+            </button>
+          </div>
+        </div>
+        <div id="qa-empty" class="flex flex-col items-center justify-center px-8 py-16 flex-1 min-h-[200px]">
+          <div class="w-28 h-28 rounded-2xl bg-slate-100 flex items-center justify-center mb-4">
+            <i class="fa-regular fa-folder-open text-5xl text-slate-300"></i>
+          </div>
+          <p class="text-[15px] text-slate-500">暂无回复</p>
+        </div>
+        <a href="./marketing-knowledge-ask.html" class="fab-qa flex flex-col items-center justify-center w-14 h-14 rounded-full bg-blue-600 text-white shadow-lg active:scale-95">
+          <i class="fa-regular fa-comment-dots text-lg"></i>
+          <span class="text-[10px] mt-0.5">提问</span>
+        </a>
+      </div>
+
+      <!-- ========== 我的 · knowledge4.jpg ========== -->
+      <div id="panel-mine" class="kb-panel kb-inner-scroll hidden flex flex-col flex-1 min-h-0 bg-white">
+        <div class="px-3 pt-2 flex items-center gap-2 shrink-0">
+          <a href="./marketing-center.html" class="text-slate-700 text-lg"><i class="fa-solid fa-angle-left"></i></a>
+          <span class="flex-1 text-center font-semibold text-[17px] text-slate-900">专家问答</span>
+          <span class="w-6"></span>
+        </div>
+        <div class="relative px-4 pt-6 pb-8 overflow-hidden">
+          <div class="absolute inset-x-0 top-0 h-32 bg-gradient-to-b from-sky-200/90 to-white rounded-b-[50%] scale-x-125"></div>
+          <div class="relative flex flex-col items-center">
+            <div class="w-[72px] h-[72px] rounded-full bg-blue-900 flex items-center justify-center text-white text-2xl font-bold border-4 border-white shadow-md">73</div>
+            <p class="mt-3 text-[18px] font-bold text-slate-900">李佳琪</p>
+            <p class="text-[14px] text-slate-500 mt-1">307773</p>
+          </div>
+        </div>
+        <div class="border-t border-slate-100 mt-2">
+          <a href="#" class="flex items-center px-4 py-4 border-b border-slate-100 active:bg-slate-50">
+            <span class="w-9 h-9 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center"><i class="fa-solid fa-star"></i></span>
+            <span class="flex-1 ml-3 text-[15px] text-slate-900">我的收藏</span>
+            <span class="text-slate-400 text-[15px]">0</span>
+            <i class="fa-solid fa-chevron-right text-slate-300 text-xs ml-1"></i>
+          </a>
+          <a href="#" class="flex items-center px-4 py-4 border-b border-slate-100 active:bg-slate-50">
+            <span class="w-9 h-9 rounded-full bg-orange-100 text-orange-500 flex items-center justify-center"><i class="fa-regular fa-comment-dots"></i></span>
+            <span class="flex-1 ml-3 text-[15px] text-slate-900">我的提问</span>
+            <span class="text-slate-400 text-[15px]">0</span>
+            <i class="fa-solid fa-chevron-right text-slate-300 text-xs ml-1"></i>
+          </a>
+          <a href="#" class="flex items-center px-4 py-4 active:bg-slate-50">
+            <span class="w-9 h-9 rounded-full bg-teal-100 text-teal-600 flex items-center justify-center"><i class="fa-regular fa-envelope"></i></span>
+            <span class="flex-1 ml-3 text-[15px] text-slate-900">反馈建议</span>
+            <i class="fa-solid fa-chevron-right text-slate-300 text-xs"></i>
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <!-- 底栏三 Tab · 与 knowledge1/2/4 一致 -->
+    <nav class="h-14 border-t border-slate-200 bg-white flex justify-around items-center shrink-0 text-[11px]" id="kb-nav">
+      <button type="button" data-kb="home" class="kb-nav-btn flex flex-col items-center gap-0.5 w-[33%] py-1 text-blue-600">
+        <i class="fa-solid fa-house text-xl"></i>
+        <span>首页</span>
+      </button>
+      <button type="button" data-kb="qa" class="kb-nav-btn flex flex-col items-center gap-0.5 w-[33%] py-1 text-slate-400">
+        <i class="fa-regular fa-comments text-xl"></i>
+        <span>专家问答</span>
+      </button>
+      <button type="button" data-kb="mine" class="kb-nav-btn flex flex-col items-center gap-0.5 w-[33%] py-1 text-slate-400">
+        <i class="fa-regular fa-user text-xl"></i>
+        <span>我的</span>
+      </button>
+    </nav>
+  </div>
+
+  <script>
+    const HOT_POOL = [
+      { t: '关于印发《上海银行操作风险管理规定》的通知（试行）…', hot: true },
+      { t: '问：流动资金贷款受托支付具体操作规程适用于哪些…', hot: true },
+      { t: '外汇业务合规手册（2025版）第三章汇总说明…', hot: true },
+      { t: '企业网银批量转账限额参数配置指引（总行）…', hot: false },
+      { t: '问：普惠金融授信尽职调查清单是否需要法定代表人…', hot: false },
+      { t: '信贷档案借阅与数字化归档管理办法摘录…', hot: false },
+      { t: '绿色金融产品准入与客户标识规则更新说明…', hot: false },
+      { t: '问：票据贴现业务如遇节假日顺延规则如何与客户约定…', hot: false },
+      { t: '供应链金融应收账款确权流程图示（对内）…', hot: false },
+      { t: '机构客户洗钱风险评估表单字段释义（修订稿）…', hot: false },
+    ];
+
+    function rankClass(i) {
+      if (i === 0) return 'text-orange-500 font-bold';
+      if (i === 1) return 'text-emerald-600 font-bold';
+      if (i === 2) return 'text-blue-600 font-bold';
+      return 'text-slate-400 font-semibold';
+    }
+
+    function renderHot(items) {
+      const ol = document.getElementById('hot-list');
+      ol.innerHTML = items.map((row, i) => `
+        <li class="flex gap-2 py-3 items-start">
+          <span class="w-6 shrink-0 text-center text-[15px] pt-0.5 ${rankClass(i)}">${i + 1}</span>
+          <p class="flex-1 text-[14px] text-slate-800 leading-snug line-clamp-2">${row.t}</p>
+          ${row.hot ? '<span class="shrink-0 text-[11px] px-1.5 py-0.5 rounded bg-red-500 text-white leading-none mt-0.5">热</span>' : '<span class="w-8 shrink-0"></span>'}
+        </li>
+      `).join('');
+    }
+
+    let hotItems = HOT_POOL.slice();
+
+    function shuffleHot() {
+      hotItems = [...HOT_POOL].sort(() => Math.random() - 0.5);
+      renderHot(hotItems);
+    }
+
+    document.getElementById('hot-refresh').addEventListener('click', shuffleHot);
+    renderHot(hotItems);
+
+    document.getElementById('home-series-dd').addEventListener('click', () => alert('切换制度系列（示意）'));
+
+    document.querySelectorAll('.qa-subtab').forEach((btn) => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.qa-subtab').forEach((b) => {
+          b.classList.remove('font-semibold', 'text-blue-600', 'border-blue-600');
+          b.classList.add('text-slate-700', 'border-transparent');
+        });
+        btn.classList.add('font-semibold', 'text-blue-600', 'border-blue-600');
+        btn.classList.remove('text-slate-700', 'border-transparent');
+      });
+    });
+
+    function showKb(panel) {
+      document.querySelectorAll('.kb-panel').forEach((p) => p.classList.add('hidden'));
+      document.getElementById('panel-' + panel).classList.remove('hidden');
+      document.querySelectorAll('.kb-nav-btn').forEach((b) => {
+        const on = b.dataset.kb === panel;
+        b.classList.toggle('text-blue-600', on);
+        b.classList.toggle('text-slate-400', !on);
+        const icon = b.querySelector('i');
+        if (b.dataset.kb === 'home') icon.className = on ? 'fa-solid fa-house text-xl' : 'fa-regular fa-house text-xl';
+        if (b.dataset.kb === 'qa') icon.className = on ? 'fa-solid fa-comments text-xl' : 'fa-regular fa-comments text-xl';
+        if (b.dataset.kb === 'mine') icon.className = on ? 'fa-solid fa-user text-xl' : 'fa-regular fa-user text-xl';
+      });
+    }
+
+    document.querySelectorAll('[data-kb]').forEach((btn) => {
+      btn.addEventListener('click', () => showKb(btn.dataset.kb));
+    });
+
+    const NAV_CATEGORIES = [
+      '企业网上银行',
+      '企业手机银行',
+      '企业电话银行',
+      '企业微信银行',
+      '云直联',
+      '电子签章',
+      '常识（大模型…',
+    ];
+
+    function renderNavSidebar(activeIdx) {
+      const aside = document.getElementById('home-nav-sidebar');
+      aside.innerHTML = NAV_CATEGORIES.map((label, i) => `
+        <button type="button" class="nav-side-item block w-full text-left text-[11px] py-3 px-1.5 leading-snug ${i === activeIdx ? 'nav-side-active' : 'text-slate-600'}">${label}</button>
+      `).join('');
+      aside.querySelectorAll('.nav-side-item').forEach((btn, i) => {
+        btn.addEventListener('click', () => {
+          renderNavSidebar(i);
+          renderNavDetail(i);
+        });
+      });
+    }
+
+    function renderNavDetail(catIdx) {
+      const detail = document.getElementById('home-nav-detail');
+      const bullets = ['投产公告', '业务通知', '常见问题'];
+      const pills = ['指导文档', '收费相关', '柜面交易', '登录', '通用', '首页', 'e 盾'];
+      detail.innerHTML = `
+        <p class="text-[11px] text-slate-400 mb-2">${NAV_CATEGORIES[catIdx]}</p>
+        <div class="space-y-2 mb-5">
+          ${bullets.map((t) => `
+            <button type="button" class="w-full flex items-center gap-2 text-left py-2 rounded-lg active:bg-slate-50">
+              <span class="text-blue-600 text-base leading-none">•</span>
+              <span class="flex-1 text-[14px] text-slate-900">${t}</span>
+              <i class="fa-solid fa-chevron-right text-slate-300 text-xs"></i>
+            </button>
+          `).join('')}
+        </div>
+        <div class="flex flex-col gap-2">
+          ${pills.map((p) => `
+            <button type="button" class="rounded-full border border-slate-200 bg-white px-3 py-2.5 text-[13px] text-slate-700 text-center shadow-sm active:bg-slate-50">${p}</button>
+          `).join('')}
+        </div>`;
+    }
+
+    function applyHomeMode(mode) {
+      document.querySelectorAll('.home-mode-pane').forEach((el) => el.classList.add('hidden'));
+      const map = { global: 'home-mode-global', ai: 'home-mode-ai', nav: 'home-mode-nav' };
+      document.getElementById(map[mode]).classList.remove('hidden');
+
+      const label = document.getElementById('home-series-label');
+      if (label) {
+        label.textContent = mode === 'global' ? '总行规章制度系列' : '企业电子渠道系列';
+      }
+      const searchRow = document.getElementById('home-global-search-row');
+      if (searchRow) searchRow.classList.toggle('hidden', mode !== 'global');
+
+      document.querySelectorAll('.home-search-tab').forEach((btn) => {
+        const on = btn.dataset.hstab === mode;
+        btn.classList.toggle('font-semibold', on);
+        btn.classList.toggle('text-blue-600', on);
+        btn.classList.toggle('border-blue-600', on);
+        btn.classList.toggle('text-slate-600', !on);
+        btn.classList.toggle('border-transparent', !on);
+        btn.querySelectorAll('.ai-mark').forEach((el) => {
+          el.classList.toggle('text-blue-600', on);
+          el.classList.toggle('text-slate-500', !on);
+        });
+        btn.querySelectorAll('.home-ai-rest').forEach((el) => {
+          el.classList.toggle('text-blue-600', on);
+          el.classList.toggle('text-slate-600', !on);
+        });
+      });
+
+      if (mode === 'nav') {
+        renderNavSidebar(0);
+        renderNavDetail(0);
+      }
+    }
+
+    document.querySelectorAll('.home-search-tab').forEach((btn) => {
+      btn.addEventListener('click', () => applyHomeMode(btn.dataset.hstab));
+    });
+
+    document.getElementById('home-ai-send-btn').addEventListener('click', () => {
+      const v = document.getElementById('home-ai-chat-input').value.trim();
+      alert(v ? `发送（示意）：${v.slice(0, 80)}` : '请输入问题或上传截图');
+    });
+
+    const qs = new URLSearchParams(location.search);
+    if (qs.get('tab') === 'qa') showKb('qa');
+    else if (qs.get('tab') === 'mine') showKb('mine');
+    else {
+      showKb('home');
+      const hm = qs.get('homeMode');
+      if (hm === 'ai' || hm === 'nav') applyHomeMode(hm);
+      else applyHomeMode('global');
+    }
+  </script>
+</body>
+</html>

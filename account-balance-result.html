@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>实施余额查询结果</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
+  <link rel="stylesheet" href="./styles.css" />
+</head>
+<body class="bg-[#e8ecf3] min-h-screen flex items-center justify-center p-6">
+  <div class="phone-shell">
+    <div class="notch"></div>
+    <div class="status-bar bg-white/95"><span>16:22</span><div class="flex gap-1"><i class="fa-solid fa-signal"></i><span>5G</span><i class="fa-solid fa-battery-full"></i></div></div>
+    <div class="safe-content px-4 pt-4 pb-4">
+      <div class="flex items-center justify-between">
+        <h1 class="page-title">实施余额查询</h1>
+        <a href="./account-query.html" class="text-sm text-blue-600">返回</a>
+      </div>
+      <div class="mt-4 bg-white rounded-2xl p-4 shadow-sm border border-slate-100">
+        <p class="text-xs text-slate-500">账号</p>
+        <p id="acct-no" class="font-mono text-sm text-slate-800 mt-1">6222000000009938</p>
+        <p class="text-xs text-slate-500 mt-3">当前可用余额</p>
+        <p class="text-3xl font-bold text-blue-700 tabular-nums mt-1">¥ 12,349,201.38</p>
+        <p class="text-xs text-slate-500 mt-2">状态：正常 · 查询时间：2026-04-28 15:02:11</p>
+      </div>
+    </div>
+    <div class="tab-bar">
+      <a class="tab-item" href="./workbench.html"><i class="fa-solid fa-table-columns text-lg"></i><div>工作台</div></a>
+      <a class="tab-item active" href="./customer-center.html"><i class="fa-regular fa-user text-lg"></i><div>客户中心</div></a>
+      <a class="tab-item" href="./marketing-center.html"><i class="fa-solid fa-bullhorn text-lg"></i><div>营销中心</div></a>
+      <a class="tab-item" href="./process-center.html"><i class="fa-solid fa-diagram-project text-lg"></i><div>流程中心</div></a>
+      <a class="tab-item" href="./management-center.html"><i class="fa-solid fa-gear text-lg"></i><div>管理中心</div></a>
+      <a class="tab-item" href="./parameter-center.html"><i class="fa-solid fa-sliders text-lg"></i><div>参数中心</div></a>
+    </div>
+  </div>
+  <script>
+    const acct = new URLSearchParams(window.location.search).get('account');
+    if (acct) document.getElementById('acct-no').textContent = acct;
+  </script>
+</body>
+</html>

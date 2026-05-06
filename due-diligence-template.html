@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>尽调模板生成</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
+  <link rel="stylesheet" href="./styles.css" />
+  <style>
+    .chip {
+      border-radius: 9999px;
+      border: 1px solid #e2e8f0;
+      background: #fff;
+      padding: 6px 12px;
+      font-size: 12px;
+      color: #475569;
+      transition: background 0.15s, border-color 0.15s, color 0.15s;
+    }
+    .chip.is-on {
+      border-color: #2563eb;
+      background: #eff6ff;
+      color: #1d4ed8;
+      font-weight: 500;
+    }
+    .chip.multi.is-on {
+      border-color: #059669;
+      background: #ecfdf5;
+      color: #047857;
+    }
+  </style>
+</head>
+<body class="bg-[#e8ecf3] min-h-screen flex items-center justify-center p-6">
+  <div class="phone-shell">
+    <div class="notch"></div>
+    <div class="status-bar bg-white/95"><span>16:22</span><div class="flex gap-1"><i class="fa-solid fa-signal"></i><span>5G</span><i class="fa-solid fa-battery-full"></i></div></div>
+    <div class="safe-content px-4 pt-4 pb-4 overflow-y-auto flex flex-col">
+      <div class="flex items-center justify-between shrink-0">
+        <h1 class="text-[18px] font-bold text-slate-900">尽调模板生成</h1>
+        <a href="./due-diligence-assistant.html" class="text-sm text-blue-600">返回</a>
+      </div>
+      <p class="mt-1 text-[11px] text-slate-500">请选择条件后下载匹配模板（原型为本地示意，对接后走接口生成文件）</p>
+
+      <div class="mt-4 space-y-5 flex-1 min-h-0">
+        <!-- 业务类型 · 单选 -->
+        <section>
+          <p class="text-[13px] font-semibold text-slate-800 mb-2">业务类型</p>
+          <div id="biz-type-group" class="flex flex-wrap gap-2"></div>
+        </section>
+
+        <!-- 所属行业 · 单选 -->
+        <section>
+          <p class="text-[13px] font-semibold text-slate-800 mb-2">所属行业</p>
+          <div id="industry-group" class="flex flex-wrap gap-2"></div>
+        </section>
+
+        <!-- 授信品种 · 单选 -->
+        <section>
+          <p class="text-[13px] font-semibold text-slate-800 mb-2">授信品种</p>
+          <div id="credit-group" class="flex flex-wrap gap-2"></div>
+        </section>
+
+        <!-- 担保类型 · 可多选 -->
+        <section>
+          <p class="text-[13px] font-semibold text-slate-800 mb-2">担保类型<span class="font-normal text-slate-400 text-xs ml-1">（可多选）</span></p>
+          <div id="guarantee-group" class="flex flex-wrap gap-2"></div>
+        </section>
+      </div>
+
+      <button type="button" id="btn-download" class="mt-6 w-full shrink-0 py-3.5 rounded-xl bg-blue-600 text-white text-[15px] font-semibold shadow-sm active:bg-blue-700">
+        模板下载
+      </button>
+    </div>
+    <div class="tab-bar">
+      <a class="tab-item active" href="./workbench.html"><i class="fa-solid fa-table-columns text-lg"></i><div>工作台</div></a>
+      <a class="tab-item" href="./customer-center.html"><i class="fa-regular fa-user text-lg"></i><div>客户中心</div></a>
+      <a class="tab-item" href="./marketing-center.html"><i class="fa-solid fa-bullhorn text-lg"></i><div>营销中心</div></a>
+      <a class="tab-item" href="./process-center.html"><i class="fa-solid fa-diagram-project text-lg"></i><div>流程中心</div></a>
+      <a class="tab-item" href="./management-center.html"><i class="fa-solid fa-gear text-lg"></i><div>管理中心</div></a>
+      <a class="tab-item" href="./parameter-center.html"><i class="fa-solid fa-sliders text-lg"></i><div>参数中心</div></a>
+    </div>
+  </div>
+
+  <script>
+    const BIZ_TYPES = ['一般业务', '集团业务'];
+    const INDUSTRIES = ['制造业', '房地产行业', '贸易行业', '融资租赁行业', '批发零售业', '建筑业'];
+    const CREDIT_TYPES = ['并购贷款', '担保授信', '固定资产贷款', '流动资金贷款', '银团贷款'];
+    const GUARANTEE_TYPES = ['企业保证担保', '个人保证担保', '抵押担保', '质押担保', '组合担保'];
+
+    function renderSingle(groupEl, labels, selectedRef) {
+      groupEl.innerHTML = '';
+      labels.forEach((label, i) => {
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.className = 'chip' + (selectedRef.value === label ? ' is-on' : '');
+        btn.textContent = label;
+        btn.addEventListener('click', () => {
+          selectedRef.value = label;
+          [...groupEl.children].forEach((c, j) => c.classList.toggle('is-on', labels[j] === label));
+        });
+        groupEl.appendChild(btn);
+      });
+    }
+
+    function renderMulti(groupEl, labels, selectedSet) {
+      groupEl.innerHTML = '';
+      labels.forEach((label) => {
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.className = 'chip multi' + (selectedSet.has(label) ? ' is-on' : '');
+        btn.textContent = label;
+        btn.addEventListener('click', () => {
+          if (selectedSet.has(label)) selectedSet.delete(label);
+          else selectedSet.add(label);
+          btn.classList.toggle('is-on', selectedSet.has(label));
+        });
+        groupEl.appendChild(btn);
+      });
+    }
+
+    const bizRef = { value: BIZ_TYPES[0] };
+    const industryRef = { value: INDUSTRIES[0] };
+    const creditRef = { value: CREDIT_TYPES[0] };
+    const guaranteeSet = new Set();
+
+    renderSingle(document.getElementById('biz-type-group'), BIZ_TYPES, bizRef);
+    renderSingle(document.getElementById('industry-group'), INDUSTRIES, industryRef);
+    renderSingle(document.getElementById('credit-group'), CREDIT_TYPES, creditRef);
+    renderMulti(document.getElementById('guarantee-group'), GUARANTEE_TYPES, guaranteeSet);
+
+    document.getElementById('btn-download').addEventListener('click', () => {
+      const lines = [
+        '【尽调模板·筛选条件】',
+        `业务类型：${bizRef.value}`,
+        `所属行业：${industryRef.value || '（未选）'}`,
+        `授信品种：${creditRef.value || '（未选）'}`,
+        `担保类型：${[...guaranteeSet].join('、') || '（未选）'}`,
+        '',
+        '（以下为示意正文，接入后替换为真实模板内容）',
+      ];
+      const blob = new Blob([lines.join('\n')], { type: 'text/plain;charset=utf-8' });
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = `尽调模板_${bizRef.value}_示意.txt`;
+      a.click();
+      URL.revokeObjectURL(a.href);
+    });
+  </script>
+</body>
+</html>
